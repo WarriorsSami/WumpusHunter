@@ -17,6 +17,7 @@ class Game:
 
         self.all_sprites = None
         self.player = None
+        self.player_img = None
         self.walls = None
         self.playing = False
         self.dt = None
@@ -27,7 +28,9 @@ class Game:
 
     def load_data(self):
         game_folder = path.dirname(__file__)
+        assets_folder = path.join(game_folder, 'assets')
         self.map = TileMap(path.join(game_folder, 'maps/map_extended.txt'))
+        self.player_img = pg.image.load(path.join(assets_folder, PLAYER_IMG)).convert_alpha()
 
     def new(self):
         self.all_sprites = pg.sprite.Group()
