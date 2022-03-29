@@ -1,7 +1,8 @@
 import sys
-from entities.sprites import *
 from os import path
 
+from entities.camera import Camera
+from entities.sprites import *
 from entities.tilemap import TileMap
 
 
@@ -20,12 +21,13 @@ class Game:
         self.playing = False
         self.dt = None
         self.map = None
+        self.camera = None
 
         self.load_data()
 
     def load_data(self):
         game_folder = path.dirname(__file__)
-        self.map = TileMap(path.join(game_folder, 'maps/map.txt'))
+        self.map = TileMap(path.join(game_folder, 'maps/map_extended.txt'))
 
     def new(self):
         self.all_sprites = pg.sprite.Group()
@@ -36,6 +38,7 @@ class Game:
                     Wall(self, col, row)
                 elif tile == 'P':
                     self.player = Player(self, col, row)
+        self.camera = Camera(self.map.width, self.map.height)
 
     def run(self):
         self.playing = True
@@ -52,6 +55,7 @@ class Game:
 
     def update(self):
         self.all_sprites.update()
+        self.camera.update(self.player)
 
     def draw_grid(self):
         # draw vertical lines
@@ -65,7 +69,9 @@ class Game:
     def draw(self):
         self.screen.fill(BG_COLOR)
         self.draw_grid()
-        self.all_sprites.draw(self.screen)
+        for sprite in self.all_sprites:
+            self.screen.blit(sprite.image, self.camera.apply(sprite))
+        pg.display.flip()
         pg.display.flip()
 
     def events(self):
