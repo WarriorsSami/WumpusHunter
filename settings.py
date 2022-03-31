@@ -31,3 +31,6 @@ PLAYER_ROT_SPEED = 250
 PLAYER_STAMINA = 100000000
 PLAYER_IMG = "PNG\\Man Blue\\manBlue_gun.png"
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
+
+# mob settings
+MOB_IMG = "PNG\\Zombie 1\\zoimbie1_hold.png"

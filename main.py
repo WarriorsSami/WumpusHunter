@@ -2,9 +2,12 @@ import sys
 from os import path
 
 from entities.camera import Camera
+
 from entities.sprites.player import Player
 from entities.sprites.wall import Wall
+from entities.sprites.mob import Mob
 from entities.sprites.utils import *
+
 from entities.tilemap import TileMap
 
 
@@ -20,8 +23,13 @@ class Game:
         self.all_sprites = None
         self.player = None
         self.player_img = None
+
         self.wall_img = None
         self.walls = None
+
+        self.mob_img = None
+        self.mobs = None
+
         self.playing = False
         self.dt = None
         self.map = None
@@ -33,19 +41,25 @@ class Game:
         game_folder = path.dirname(__file__)
         assets_folder = path.join(game_folder, 'assets')
         self.map = TileMap(path.join(game_folder, 'maps/map_extended.txt'))
+
         self.player_img = pg.image.load(path.join(assets_folder, PLAYER_IMG)).convert_alpha()
+        self.mob_img = pg.image.load(path.join(assets_folder, MOB_IMG)).convert_alpha()
+
         self.wall_img = pg.image.load(path.join(assets_folder, WALL_IMG)).convert_alpha()
         self.wall_img = pg.transform.scale(self.wall_img, (TILE_SIZE, TILE_SIZE))
 
     def new(self):
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
+        self.mobs = pg.sprite.Group()
         for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
                 if tile == '1':
                     Wall(self, col, row)
                 elif tile == 'P':
                     self.player = Player(self, col, row)
+                elif tile == 'M':
+                    Mob(self, col, row)
         self.camera = Camera(self.map.width, self.map.height)
 
     def run(self):
