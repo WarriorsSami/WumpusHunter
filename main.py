@@ -14,6 +14,9 @@ from entities.tilemap import TileMap
 class Game:
     def __init__(self):
         pg.init()
+        pg.font.init()
+        self.font = pg.font.SysFont('Comic Sans MS', 30)
+        self.score_text_rect = None
 
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
@@ -48,6 +51,9 @@ class Game:
         self.wall_img = pg.image.load(path.join(assets_folder, WALL_IMG)).convert_alpha()
         self.wall_img = pg.transform.scale(self.wall_img, (TILE_SIZE, TILE_SIZE))
 
+    def show_score(self):
+        self.screen.blit(self.score_text_rect, (10, 10))
+
     def new(self):
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
@@ -61,6 +67,7 @@ class Game:
                 elif tile == 'M':
                     Mob(self, col, row)
         self.camera = Camera(self.map.width, self.map.height)
+        self.score_text_rect = self.font.render(f'Current score: {self.player.score}', True, LIGHT_GREEN, BROWN)
 
     def run(self):
         self.playing = True
@@ -78,6 +85,7 @@ class Game:
     def update(self):
         self.all_sprites.update()
         self.camera.update(self.player)
+        self.score_text_rect = self.font.render(f'Current score: {self.player.score}', True, LIGHT_GREEN, BROWN)
 
     def draw_grid(self):
         # draw vertical lines
@@ -95,6 +103,7 @@ class Game:
         for sprite in self.all_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
         # pg.draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
+        self.show_score()
         pg.display.flip()
 
     def events(self):
