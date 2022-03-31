@@ -17,21 +17,23 @@ class Player(pg.sprite.Sprite):
         self.rot = 0
         self.last_shot = 0
         self.score = PLAYER_STAMINA
+        self.health = PLAYER_HEALTH
 
     def get_keys(self):
         self.rot_speed = 0
         self.vel = vec(0, 0)
         keys = pg.key.get_pressed()
-        if keys[pg.K_LEFT] or keys[pg.K_a]:
-            self.rot_speed = PLAYER_ROT_SPEED
-            self.score -= 1
-        if keys[pg.K_RIGHT] or keys[pg.K_d]:
-            self.rot_speed = -PLAYER_ROT_SPEED
-            self.score -= 1
-        if keys[pg.K_UP] or keys[pg.K_w]:
-            self.vel = vec(PLAYER_SPEED, 0).rotate(-self.rot)
-        if keys[pg.K_DOWN] or keys[pg.K_s]:
-            self.vel = vec(-PLAYER_SPEED / 2, 0).rotate(-self.rot)
+        if self.score > 0:
+            if keys[pg.K_LEFT] or keys[pg.K_a]:
+                self.rot_speed = PLAYER_ROT_SPEED
+                self.score += ROT_PENALTY
+            if keys[pg.K_RIGHT] or keys[pg.K_d]:
+                self.rot_speed = -PLAYER_ROT_SPEED
+                self.score += ROT_PENALTY
+            if keys[pg.K_UP] or keys[pg.K_w]:
+                self.vel = vec(PLAYER_SPEED, 0).rotate(-self.rot)
+            if keys[pg.K_DOWN] or keys[pg.K_s]:
+                self.vel = vec(-PLAYER_SPEED / 2, 0).rotate(-self.rot)
         if keys[pg.K_SPACE]:
             now = pg.time.get_ticks()
             if now - self.last_shot > BULLET_RATE:
@@ -40,6 +42,7 @@ class Player(pg.sprite.Sprite):
                 pos = self.pos + BARREL_OFFSET.rotate(-self.rot)
                 Bullet(self.game, pos, dir_vec)
                 self.vel = vec(-KICKBACK, 0).rotate(-self.rot)
+                self.score += SHOT_PENALTY
 
         if self.vel.x != 0 and self.vel.y != 0:
             self.vel.x *= 0.7071

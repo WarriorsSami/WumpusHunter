@@ -11,6 +11,27 @@ from entities.sprites.utils import *
 from entities.tilemap import TileMap
 
 
+# HUD functions
+def draw_player_health(surf, x, y, pct):
+    if pct < 0:
+        pct = 0
+
+    BAR_LENGTH = 100
+    BAR_HEIGHT = 20
+    fill = pct * BAR_LENGTH
+    outline_rect = pg.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
+    fill_rect = pg.Rect(x, y, fill, BAR_HEIGHT)
+
+    if pct > 0.6:
+        col = GREEN
+    elif pct > 0.3:
+        col = YELLOW
+    else:
+        col = RED
+    pg.draw.rect(surf, col, fill_rect)
+    pg.draw.rect(surf, WHITE, outline_rect, 2)
+
+
 class Game:
     def __init__(self):
         pg.init()
@@ -99,7 +120,20 @@ class Game:
         # bullet hits mob
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         for hit in hits:
-            hit.kill()
+            if isinstance(hit, Mob):
+                hit.health -= BULLET_DAMAGE
+                hit.vel = vec(0, 0)
+                self.player.score += SHOT_MOB_AWARD
+
+        # mob hits player
+        hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
+        for hit in hits:
+            self.player.health -= MOB_DAMAGE
+            hit.vel = vec(0, 0)
+            if self.player.health <= 0:
+                self.playing = False
+        if hits:
+            self.player.pos += vec(MOB_KNOCK_BACK, 0).rotate(-hits[0].rot)
 
     def draw_grid(self):
         # draw vertical lines
@@ -115,15 +149,16 @@ class Game:
         self.screen.fill(BG_COLOR)
         # self.draw_grid()
         for sprite in self.all_sprites:
+            if isinstance(sprite, Mob):
+                sprite.draw_health()
             self.screen.blit(sprite.image, self.camera.apply(sprite))
         # pg.draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
         self.show_score()
+        draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
         pg.display.flip()
 
     def events(self):
         for event in pg.event.get():
-            if self.player.score < 0:
-                self.quit()
             if event.type == pg.QUIT:
                 self.quit()
             if event.type == pg.KEYDOWN:

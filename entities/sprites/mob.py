@@ -15,6 +15,8 @@ class Mob(pg.sprite.Sprite):
         self.acc = vec(0, 0)
         self.rect.center = self.pos
         self.rot = 0
+        self.health = MOB_HEALTH
+        self.health_bar = None
 
     def update(self):
         # rotate mob to face player
@@ -35,4 +37,22 @@ class Mob(pg.sprite.Sprite):
         collide_with_entity(self, self.game.walls, 'x')
         self.hit_rect.centery = self.pos.y
         collide_with_entity(self, self.game.walls, 'y')
-        self.hit_rect.center = self.pos
+        self.rect.center = self.hit_rect.center
+        if self.health <= 0:
+            self.kill()
+            self.game.player.score += KILL_MOB_AWARD
+
+    def draw_health(self):
+        if self.health > 2 * MOB_HEALTH / 3:
+            col = GREEN
+        elif self.health > MOB_HEALTH / 3:
+            col = YELLOW
+        else:
+            col = RED
+
+        width = int(self.rect.width * self.health / MOB_HEALTH)
+        self.health_bar = pg.Rect(0, 0, width, 7)
+
+        # draw health bar when mob is damaged for the first time
+        if self.health < MOB_HEALTH:
+            pg.draw.rect(self.image, col, self.health_bar)
