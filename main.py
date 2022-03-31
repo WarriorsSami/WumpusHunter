@@ -33,6 +33,9 @@ class Game:
         self.mob_img = None
         self.mobs = None
 
+        self.bullet_img = None
+        self.bullets = None
+
         self.playing = False
         self.dt = None
         self.map = None
@@ -48,16 +51,21 @@ class Game:
         self.player_img = pg.image.load(path.join(assets_folder, PLAYER_IMG)).convert_alpha()
         self.mob_img = pg.image.load(path.join(assets_folder, MOB_IMG)).convert_alpha()
 
+        self.bullet_img = pg.image.load(path.join(assets_folder, BULLET_IMG)).convert_alpha()
+        self.bullet_img = pg.transform.scale(self.bullet_img, (BULLET_WIDTH, BULLET_HEIGHT))
+
         self.wall_img = pg.image.load(path.join(assets_folder, WALL_IMG)).convert_alpha()
         self.wall_img = pg.transform.scale(self.wall_img, (TILE_SIZE, TILE_SIZE))
 
     def show_score(self):
-        self.screen.blit(self.score_text_rect, (10, 10))
+        self.screen.blit(self.score_text_rect, (WIDTH - 400, 10))
 
     def new(self):
         self.all_sprites = pg.sprite.Group()
         self.walls = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
+        self.bullets = pg.sprite.Group()
+
         for row, tiles in enumerate(self.map.data):
             for col, tile in enumerate(tiles):
                 if tile == '1':
@@ -83,9 +91,15 @@ class Game:
         sys.exit()
 
     def update(self):
+        # update all sprites
         self.all_sprites.update()
         self.camera.update(self.player)
+        # display score on screen
         self.score_text_rect = self.font.render(f'Current score: {self.player.score}', True, LIGHT_GREEN, BROWN)
+        # bullet hits mob
+        hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
+        for hit in hits:
+            hit.kill()
 
     def draw_grid(self):
         # draw vertical lines

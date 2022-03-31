@@ -1,3 +1,4 @@
+from entities.sprites.bullet import Bullet
 from entities.sprites.utils import *
 
 
@@ -14,6 +15,7 @@ class Player(pg.sprite.Sprite):
         self.pos = vec(x, y) * TILE_SIZE
         self.rot_speed = 0
         self.rot = 0
+        self.last_shot = 0
         self.score = PLAYER_STAMINA
 
     def get_keys(self):
@@ -30,6 +32,15 @@ class Player(pg.sprite.Sprite):
             self.vel = vec(PLAYER_SPEED, 0).rotate(-self.rot)
         if keys[pg.K_DOWN] or keys[pg.K_s]:
             self.vel = vec(-PLAYER_SPEED / 2, 0).rotate(-self.rot)
+        if keys[pg.K_SPACE]:
+            now = pg.time.get_ticks()
+            if now - self.last_shot > BULLET_RATE:
+                self.last_shot = now
+                dir_vec = vec(1, 0).rotate(-self.rot)
+                pos = self.pos + BARREL_OFFSET.rotate(-self.rot)
+                Bullet(self.game, pos, dir_vec)
+                self.vel = vec(-KICKBACK, 0).rotate(-self.rot)
+
         if self.vel.x != 0 and self.vel.y != 0:
             self.vel.x *= 0.7071
             self.vel.y *= 0.7071
