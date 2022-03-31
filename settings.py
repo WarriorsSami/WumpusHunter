@@ -34,3 +34,5 @@ PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
 
 # mob settings
 MOB_IMG = "PNG\\Zombie 1\\zoimbie1_hold.png"
+MOB_SPEED = 100
+MOB_HIT_RECT = pg.Rect(0, 0, 30, 30)
