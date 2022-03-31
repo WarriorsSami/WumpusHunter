@@ -2,7 +2,9 @@ import sys
 from os import path
 
 from entities.camera import Camera
-from entities.sprites import *
+from entities.sprites.player import Player
+from entities.sprites.wall import Wall
+from entities.sprites.utils import *
 from entities.tilemap import TileMap
 
 
@@ -18,6 +20,7 @@ class Game:
         self.all_sprites = None
         self.player = None
         self.player_img = None
+        self.wall_img = None
         self.walls = None
         self.playing = False
         self.dt = None
@@ -31,6 +34,8 @@ class Game:
         assets_folder = path.join(game_folder, 'assets')
         self.map = TileMap(path.join(game_folder, 'maps/map_extended.txt'))
         self.player_img = pg.image.load(path.join(assets_folder, PLAYER_IMG)).convert_alpha()
+        self.wall_img = pg.image.load(path.join(assets_folder, WALL_IMG)).convert_alpha()
+        self.wall_img = pg.transform.scale(self.wall_img, (TILE_SIZE, TILE_SIZE))
 
     def new(self):
         self.all_sprites = pg.sprite.Group()
@@ -63,15 +68,16 @@ class Game:
     def draw_grid(self):
         # draw vertical lines
         for x in range(0, WIDTH, TILE_SIZE):
-            pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
+            pg.draw.line(self.screen, LIGHT_GREY, (x, 0), (x, HEIGHT))
 
         # draw horizontal lines
         for y in range(0, HEIGHT, TILE_SIZE):
-            pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
+            pg.draw.line(self.screen, LIGHT_GREY, (0, y), (WIDTH, y))
 
     def draw(self):
+        pg.display.set_caption("{:.2f}".format(self.clock.get_fps()))
         self.screen.fill(BG_COLOR)
-        self.draw_grid()
+        # self.draw_grid()
         for sprite in self.all_sprites:
             self.screen.blit(sprite.image, self.camera.apply(sprite))
         # pg.draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
@@ -79,6 +85,8 @@ class Game:
 
     def events(self):
         for event in pg.event.get():
+            if self.player.score < 0:
+                self.quit()
             if event.type == pg.QUIT:
                 self.quit()
             if event.type == pg.KEYDOWN:

@@ -1,9 +1,4 @@
-from settings import *
-vec = pg.math.Vector2
-
-
-def collide_hit_rect(one, two):
-    return one.hit_rect.colliderect(two.rect)
+from entities.sprites.utils import *
 
 
 class Player(pg.sprite.Sprite):
@@ -19,6 +14,7 @@ class Player(pg.sprite.Sprite):
         self.pos = vec(x, y) * TILE_SIZE
         self.rot_speed = 0
         self.rot = 0
+        self.score = PLAYER_STAMINA
 
     def get_keys(self):
         self.rot_speed = 0
@@ -26,8 +22,12 @@ class Player(pg.sprite.Sprite):
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT] or keys[pg.K_a]:
             self.rot_speed = PLAYER_ROT_SPEED
+            self.score -= 1
+            print(self.score)
         if keys[pg.K_RIGHT] or keys[pg.K_d]:
             self.rot_speed = -PLAYER_ROT_SPEED
+            self.score -= 1
+            print(self.score)
         if keys[pg.K_UP] or keys[pg.K_w]:
             self.vel = vec(PLAYER_SPEED, 0).rotate(-self.rot)
         if keys[pg.K_DOWN] or keys[pg.K_s]:
@@ -67,17 +67,3 @@ class Player(pg.sprite.Sprite):
         self.hit_rect.centery = self.pos.y
         self.collide_with_walls('y')
         self.rect.center = self.hit_rect.center
-
-
-class Wall(pg.sprite.Sprite):
-    def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.walls
-        pg.sprite.Sprite.__init__(self, self.groups)
-        self.game = game
-        self.image = pg.Surface((TILE_SIZE, TILE_SIZE))
-        self.image.fill(GREEN)
-        self.rect = self.image.get_rect()
-        self.x = x
-        self.y = y
-        self.rect.x = x * TILE_SIZE
-        self.rect.y = y * TILE_SIZE

@@ -1,6 +1,5 @@
 import pygame as pg
 
-from entities.sprites import Player
 from settings import WIDTH, HEIGHT
 
 
