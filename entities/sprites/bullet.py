@@ -1,4 +1,4 @@
-from entities.sprites.utils import *
+from settings import *
 
 
 class Bullet(pg.sprite.Sprite):

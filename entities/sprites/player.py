@@ -10,17 +10,26 @@ class Player(pg.sprite.Sprite):
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = game.player_img
+
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
+
         self.hit_rect = PLAYER_HIT_RECT
         self.hit_rect.center = self.rect.center
+
         self.vel = vec(0, 0)
         self.pos = vec(x, y)
         self.rot_speed = 0
         self.rot = 0
+
         self.last_shot = 0
         self.score = PLAYER_STAMINA
         self.health = PLAYER_HEALTH
+
+        self.hit_obstacle = False
+        self.hit_mob = False
+        self.last_hit_mob = 0
+        self.hit_treasure = False
 
     def get_keys(self):
         self.rot_speed = 0
@@ -55,6 +64,8 @@ class Player(pg.sprite.Sprite):
 
     def update(self):
         self.get_keys()
+        if pg.time.get_ticks() - self.last_hit_mob > HIT_MOB_FLAG_LIFETIME:
+            self.hit_mob = False
 
         # apply rotation and linear velocity
         self.rot = (self.rot + self.rot_speed * self.game.dt) % 360
@@ -64,8 +75,9 @@ class Player(pg.sprite.Sprite):
         self.pos += self.vel * self.game.dt
 
         # apply collision
+        self.hit_obstacle = False
         self.hit_rect.centerx = self.pos.x
-        collide_with_group(self, self.game.walls, 'x')
+        self.hit_obstacle = collide_with_group(self, self.game.walls, 'x')
         self.hit_rect.centery = self.pos.y
-        collide_with_group(self, self.game.walls, 'y')
+        self.hit_obstacle = collide_with_group(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center

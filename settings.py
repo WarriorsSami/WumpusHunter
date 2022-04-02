@@ -35,6 +35,7 @@ PLAYER_ROT_SPEED = 250
 PLAYER_STAMINA = 1000000
 PLAYER_IMG = "PNG\\Man Blue\\manBlue_gun.png"
 PLAYER_HIT_RECT = pg.Rect(0, 0, 35, 35)
+HIT_MOB_FLAG_LIFETIME = 300
 
 # define penalties and awards
 SHOT_PENALTY = -1

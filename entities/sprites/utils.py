@@ -44,3 +44,7 @@ def collide_with_group(sprite, group, dir_str):
             sprite.vel.y = 0
             # update the position of the sprite's collider
             sprite.hit_rect.centery = sprite.pos.y
+
+        return True
+
+    return False

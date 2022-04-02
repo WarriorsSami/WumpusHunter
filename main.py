@@ -2,15 +2,13 @@ import sys
 from os import path
 
 from entities.camera import Camera
-
-from entities.sprites.player import Player
+from entities.sprites.effects.blood_scratch import BloodScratch
+from entities.sprites.effects.blood_splash import BloodSplash
+from entities.sprites.effects.i_visual_effect import IVisualEffect
 from entities.sprites.mob import Mob
 from entities.sprites.obstacle import Obstacle
-from entities.sprites.effects.i_visual_effect import IVisualEffect
-from entities.sprites.effects.blood_splash import BloodSplash
-from entities.sprites.effects.blood_scratch import BloodScratch
+from entities.sprites.player import Player
 from entities.sprites.utils import *
-
 from entities.tiled_map import TiledMap
 
 
@@ -21,9 +19,9 @@ def draw_player_health(surf, x, y, pct):
 
     BAR_LENGTH = 100
     BAR_HEIGHT = 20
-    fill = pct * BAR_LENGTH
+    fill_percentage = pct * BAR_LENGTH
     outline_rect = pg.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
-    fill_rect = pg.Rect(x, y, fill, BAR_HEIGHT)
+    fill_rect = pg.Rect(x, y, fill_percentage, BAR_HEIGHT)
 
     if pct > 0.6:
         col = GREEN
@@ -39,8 +37,13 @@ class Game:
     def __init__(self):
         pg.init()
         pg.font.init()
+
         self.font = pg.font.SysFont('Comic Sans MS', 30)
         self.score_text_rect = None
+
+        self.hit_obstacle_text_rect = None
+        self.hit_mob_text_rect = None
+        self.hit_treasure_text_rect = None
 
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
@@ -102,8 +105,10 @@ class Game:
         for img in BLOOD_SCRATCHES:
             self.blood_scratches.append(pg.image.load(path.join(assets_folder, img)).convert_alpha())
 
-    def show_score(self):
+    def show_performance(self):
         self.screen.blit(self.score_text_rect, (WIDTH - 400, 10))
+        self.screen.blit(self.hit_obstacle_text_rect, (WIDTH - 400, 50))
+        self.screen.blit(self.hit_mob_text_rect, (WIDTH - 260, 50))
 
     def new(self):
         self.all_sprites = pg.sprite.LayeredUpdates()
@@ -130,7 +135,10 @@ class Game:
 
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
-        self.score_text_rect = self.font.render(f'Current score: {self.player.score}', True, LIGHT_GREEN, BROWN)
+
+        self.score_text_rect = self.font.render(f'Current score: {self.player.score}', True, BLACK)
+        self.hit_obstacle_text_rect = self.font.render(f'W: {self.player.hit_obstacle}', True, BLACK)
+        self.hit_mob_text_rect = self.font.render(f'M: {self.player.hit_mob}', True, BLACK)
 
     def run(self):
         self.playing = True
@@ -149,8 +157,17 @@ class Game:
         # update all sprites
         self.all_sprites.update()
         self.camera.update(self.player)
+
         # display score on screen
-        self.score_text_rect = self.font.render(f'Current score: {self.player.score}', True, LIGHT_GREEN, BROWN)
+        self.score_text_rect = self.font.render(f'Current score: {self.player.score}', True, BLACK)
+
+        # display hit obstacle flag on screen
+        color = BLACK if not self.player.hit_obstacle else RED
+        self.hit_obstacle_text_rect = self.font.render(f'W: {self.player.hit_obstacle}', True, color)
+        # display hit mob flag on screen
+        color = BLACK if not self.player.hit_mob else RED
+        self.hit_mob_text_rect = self.font.render(f'M: {self.player.hit_mob}', True, color)
+
         # bullet hits mob
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         for hit in hits:
@@ -171,6 +188,8 @@ class Game:
                 self.playing = False
         if hits:
             self.player.pos += vec(MOB_KNOCK_BACK, 0).rotate(-hits[0].rot)
+            self.player.hit_mob = True
+            self.player.last_hit_mob = pg.time.get_ticks()
 
     def draw_grid(self):
         # draw vertical lines
@@ -196,7 +215,7 @@ class Game:
             for wall in self.walls:
                 pg.draw.rect(self.screen, CYAN, self.camera.apply_rect(wall.rect), 1)
         # pg.draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
-        self.show_score()
+        self.show_performance()
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
         pg.display.flip()
 

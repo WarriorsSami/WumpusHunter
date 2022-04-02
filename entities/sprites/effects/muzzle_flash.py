@@ -1,5 +1,4 @@
-from entities.sprites.effects.i_visual_effect import IVisualEffect
-from entities.sprites.utils import *
+from entities.sprites.effects.i_visual_effect import *
 
 
 class MuzzleFlash(IVisualEffect):
