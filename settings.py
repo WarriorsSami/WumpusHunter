@@ -1,4 +1,5 @@
 import pygame as pg
+from random import randint, uniform, choice
 vec = pg.math.Vector2
 
 # define some common color (RGB)
@@ -63,3 +64,23 @@ MOB_HEALTH = 100
 MOB_DAMAGE = 10
 MOB_KNOCK_BACK = 20
 MOB_AVOID_RADIUS = 50
+
+# define visual effects
+MUZZLE_FLASHES = ["PNG\\Puff\\whitePuff15.png", "PNG\\Puff\\whitePuff16.png",
+                  "PNG\\Puff\\whitePuff17.png", "PNG\\Puff\\whitePuff18.png"]
+
+BLOOD_SPLASHES = ["Particles\\PNG (Transparent)\\scorch_01.png", "Particles\\PNG (Transparent)\\scorch_02.png",
+                  "Particles\\PNG (Transparent)\\scorch_03.png"]
+FLASH_OFFSET = vec(-10, 0)
+FLASH_LIFETIME = 50
+
+BLOOD_SCRATCHES = ["Particles\\PNG (Transparent)\\scratch_01.png"]
+SCRATCH_OFFSET = vec(-15, -5)
+SCRATCH_LIFETIME = 100
+
+# define layers
+WALL_LAYER = 1
+PLAYER_LAYER = 2
+BULLET_LAYER = 3
+MOB_LAYER = 2
+EFFECTS_LAYER = 4

@@ -6,6 +6,9 @@ from entities.camera import Camera
 from entities.sprites.player import Player
 from entities.sprites.mob import Mob
 from entities.sprites.obstacle import Obstacle
+from entities.sprites.effects.i_visual_effect import IVisualEffect
+from entities.sprites.effects.blood_splash import BloodSplash
+from entities.sprites.effects.blood_scratch import BloodScratch
 from entities.sprites.utils import *
 
 from entities.tiled_map import TiledMap
@@ -68,6 +71,10 @@ class Game:
 
         self.camera = None
 
+        self.gun_flashes = []
+        self.blood_splashes = []
+        self.blood_scratches = []
+
         self.load_data()
 
     def load_data(self):
@@ -88,11 +95,18 @@ class Game:
         self.wall_img = pg.image.load(path.join(assets_folder, WALL_IMG)).convert_alpha()
         self.wall_img = pg.transform.scale(self.wall_img, (TILE_SIZE, TILE_SIZE))
 
+        for img in MUZZLE_FLASHES:
+            self.gun_flashes.append(pg.image.load(path.join(assets_folder, img)).convert_alpha())
+        for img in BLOOD_SPLASHES:
+            self.blood_splashes.append(pg.image.load(path.join(assets_folder, img)).convert_alpha())
+        for img in BLOOD_SCRATCHES:
+            self.blood_scratches.append(pg.image.load(path.join(assets_folder, img)).convert_alpha())
+
     def show_score(self):
         self.screen.blit(self.score_text_rect, (WIDTH - 400, 10))
 
     def new(self):
-        self.all_sprites = pg.sprite.Group()
+        self.all_sprites = pg.sprite.LayeredUpdates()
         self.walls = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
@@ -144,12 +158,14 @@ class Game:
                 hit.health -= BULLET_DAMAGE
                 hit.vel = vec(0, 0)
                 self.player.score += SHOT_MOB_AWARD
+                BloodSplash(self, hit.pos + FLASH_OFFSET)
 
         # mob hits player
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
             self.player.health -= MOB_DAMAGE
             self.player.score += COLLIDE_WITH_MOB_PENALTY
+            BloodScratch(self, self.player.pos + SCRATCH_OFFSET)
             hit.vel = vec(0, 0)
             if self.player.health <= 0:
                 self.playing = False
@@ -174,7 +190,7 @@ class Game:
             if isinstance(sprite, Mob):
                 sprite.draw_health()
             self.screen.blit(sprite.image, self.camera.apply(sprite))
-            if self.draw_debug:
+            if self.draw_debug and not isinstance(sprite, IVisualEffect):
                 pg.draw.rect(self.screen, CYAN, self.camera.apply_rect(sprite.hit_rect), 1)
         if self.draw_debug:
             for wall in self.walls:

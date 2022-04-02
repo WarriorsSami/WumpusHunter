@@ -1,10 +1,9 @@
-from random import uniform
-
 from entities.sprites.utils import *
 
 
 class Bullet(pg.sprite.Sprite):
     def __init__(self, game, pos, dir_vec):
+        self._layer = BULLET_LAYER
         self.groups = game.all_sprites, game.bullets
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game

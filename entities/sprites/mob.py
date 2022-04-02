@@ -1,14 +1,15 @@
 from entities.sprites.utils import *
-from random import choice
 
 
 class Mob(pg.sprite.Sprite):
     def __init__(self, game, x, y):
+        self._layer = MOB_LAYER
         self.groups = game.all_sprites, game.mobs
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
         self.image = game.mob_img
         self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
         self.hit_rect = MOB_HIT_RECT.copy()
         self.hit_rect.center = self.rect.center
         self.pos = vec(x, y)
@@ -47,9 +48,9 @@ class Mob(pg.sprite.Sprite):
 
         # apply collision
         self.hit_rect.centerx = self.pos.x
-        collide_with_entity(self, self.game.walls, 'x')
+        collide_with_group(self, self.game.walls, 'x')
         self.hit_rect.centery = self.pos.y
-        collide_with_entity(self, self.game.walls, 'y')
+        collide_with_group(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
         if self.health <= 0:
             self.kill()
