@@ -57,8 +57,9 @@ BULLET_DAMAGE = 10
 
 # mob settings
 MOB_IMG = "PNG\\Zombie 1\\zoimbie1_hold.png"
-MOB_SPEED = 150
+MOB_SPEEDS = [150, 100, 75, 125, 200, 150]
 MOB_HIT_RECT = pg.Rect(0, 0, 30, 30)
 MOB_HEALTH = 100
 MOB_DAMAGE = 10
 MOB_KNOCK_BACK = 20
+MOB_AVOID_RADIUS = 50

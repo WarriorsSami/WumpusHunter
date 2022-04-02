@@ -149,6 +149,7 @@ class Game:
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
             self.player.health -= MOB_DAMAGE
+            self.player.score += COLLIDE_WITH_MOB_PENALTY
             hit.vel = vec(0, 0)
             if self.player.health <= 0:
                 self.playing = False

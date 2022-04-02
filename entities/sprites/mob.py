@@ -1,4 +1,5 @@
 from entities.sprites.utils import *
+from random import choice
 
 
 class Mob(pg.sprite.Sprite):
@@ -17,6 +18,14 @@ class Mob(pg.sprite.Sprite):
         self.rot = 0
         self.health = MOB_HEALTH
         self.health_bar = None
+        self.speed = choice(MOB_SPEEDS)
+
+    def avoid_mobs(self):
+        for mob in self.game.mobs:
+            if mob != self:
+                dist = self.pos - mob.pos
+                if 0 < dist.length() < MOB_AVOID_RADIUS:
+                    self.acc += dist.normalize()
 
     def update(self):
         # rotate mob to face player
@@ -25,11 +34,15 @@ class Mob(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
 
-        # accelerate mob movement towards player
-        self.acc = vec(MOB_SPEED, 0).rotate(-self.rot)
+        # accelerate mob movement towards player and
+        # keep it away from other nearby mobs
+        self.acc = vec(1, 0).rotate(-self.rot)
+        self.avoid_mobs()
+        self.acc.scale_to_length(self.speed)
         # apply friction
         self.acc += self.vel * -1
         self.vel += self.acc * self.game.dt
+        # apply the 2nd equation of motion
         self.pos += self.vel * self.game.dt + 0.5 * self.acc * self.game.dt ** 2
 
         # apply collision
