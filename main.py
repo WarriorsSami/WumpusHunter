@@ -4,8 +4,8 @@ from os import path
 from entities.camera import Camera
 
 from entities.sprites.player import Player
-from entities.sprites.wall import Wall
 from entities.sprites.mob import Mob
+from entities.sprites.obstacle import Obstacle
 from entities.sprites.utils import *
 
 from entities.tiled_map import TiledMap
@@ -45,6 +45,8 @@ class Game:
         pg.key.set_repeat(500, 100)
 
         self.all_sprites = None
+        self.draw_debug = False
+
         self.player = None
         self.player_img = None
 
@@ -103,8 +105,17 @@ class Game:
         #             self.player = Player(self, col, row)
         #         elif tile == 'M':
         #             Mob(self, col, row)
-        self.player = Player(self, 10, 10)
+
+        for tile_object in self.map.tmx_data.objects:
+            if tile_object.name == 'player':
+                self.player = Player(self, tile_object.x, tile_object.y)
+            elif tile_object.name == 'wall':
+                Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
+            elif tile_object.name == 'mob':
+                Mob(self, tile_object.x, tile_object.y)
+
         self.camera = Camera(self.map.width, self.map.height)
+        self.draw_debug = False
         self.score_text_rect = self.font.render(f'Current score: {self.player.score}', True, LIGHT_GREEN, BROWN)
 
     def run(self):
@@ -162,6 +173,11 @@ class Game:
             if isinstance(sprite, Mob):
                 sprite.draw_health()
             self.screen.blit(sprite.image, self.camera.apply(sprite))
+            if self.draw_debug:
+                pg.draw.rect(self.screen, CYAN, self.camera.apply_rect(sprite.hit_rect), 1)
+        if self.draw_debug:
+            for wall in self.walls:
+                pg.draw.rect(self.screen, CYAN, self.camera.apply_rect(wall.rect), 1)
         # pg.draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
         self.show_score()
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
@@ -174,6 +190,8 @@ class Game:
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.quit()
+                if event.key == pg.K_F1:
+                    self.draw_debug = not self.draw_debug
 
     def show_start_screen(self):
         pass

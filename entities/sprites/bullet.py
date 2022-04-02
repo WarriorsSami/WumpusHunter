@@ -10,6 +10,7 @@ class Bullet(pg.sprite.Sprite):
         self.game = game
         self.image = game.bullet_img
         self.rect = self.image.get_rect()
+        self.hit_rect = self.rect
         self.pos = vec(pos)
         self.rect.center = pos
         spread = uniform(-GUN_SPREAD, GUN_SPREAD)

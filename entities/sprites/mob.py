@@ -10,7 +10,7 @@ class Mob(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.hit_rect = MOB_HIT_RECT.copy()
         self.hit_rect.center = self.rect.center
-        self.pos = vec(x, y) * TILE_SIZE
+        self.pos = vec(x, y)
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
         self.rect.center = self.pos
