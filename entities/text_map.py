@@ -1,7 +1,7 @@
 from settings import TILE_SIZE
 
 
-class TileMap:
+class TextMap:
     def __init__(self, filename):
         self.data = []
         with open(filename, 'rt') as f:

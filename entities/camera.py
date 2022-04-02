@@ -13,6 +13,10 @@ class Camera:
     def apply(self, entity):
         return entity.rect.move(self.camera.topleft)
 
+    # display rectangle of an entity relative to camera on the visible screen
+    def apply_rect(self, rect):
+        return rect.move(self.camera.topleft)
+
     # update camera position to follow targeted entity
     def update(self, target):
         x = -target.rect.centerx + int(WIDTH / 2)
