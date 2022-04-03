@@ -77,6 +77,7 @@ class Game:
         self.gun_flashes = []
         self.blood_splashes = []
         self.blood_scratches = []
+        self.smoke_clouds = []
 
         self.load_data()
 
@@ -98,12 +99,15 @@ class Game:
         self.wall_img = pg.image.load(path.join(assets_folder, WALL_IMG)).convert_alpha()
         self.wall_img = pg.transform.scale(self.wall_img, (TILE_SIZE, TILE_SIZE))
 
+        # load the assets for visual effects
         for img in MUZZLE_FLASHES:
             self.gun_flashes.append(pg.image.load(path.join(assets_folder, img)).convert_alpha())
         for img in BLOOD_SPLASHES:
             self.blood_splashes.append(pg.image.load(path.join(assets_folder, img)).convert_alpha())
         for img in BLOOD_SCRATCHES:
             self.blood_scratches.append(pg.image.load(path.join(assets_folder, img)).convert_alpha())
+        for img in SMOKE_CLOUDS:
+            self.smoke_clouds.append(pg.image.load(path.join(assets_folder, img)).convert_alpha())
 
     def show_performance(self):
         self.screen.blit(self.score_text_rect, (WIDTH - 400, 10))

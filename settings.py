@@ -1,5 +1,6 @@
 import pygame as pg
 from random import randint, uniform, choice
+
 vec = pg.math.Vector2
 
 # define some common color (RGB)
@@ -78,6 +79,13 @@ FLASH_LIFETIME = 50
 BLOOD_SCRATCHES = ["Particles\\PNG (Transparent)\\scratch_01.png"]
 SCRATCH_OFFSET = vec(-15, -5)
 SCRATCH_LIFETIME = 100
+
+SMOKE_CLOUDS = ["Particles\\PNG (Transparent)\\smoke_01.png", "Particles\\PNG (Transparent)\\smoke_02.png",
+                "Particles\\PNG (Transparent)\\smoke_03.png", "Particles\\PNG (Transparent)\\smoke_04.png",
+                "Particles\\PNG (Transparent)\\smoke_05.png", "Particles\\PNG (Transparent)\\smoke_06.png",
+                "Particles\\PNG (Transparent)\\smoke_07.png", "Particles\\PNG (Transparent)\\smoke_08.png",
+                "Particles\\PNG (Transparent)\\smoke_09.png", "Particles\\PNG (Transparent)\\smoke_10.png"]
+CLOUD_LIFETIME = 100
 
 # define layers
 WALL_LAYER = 1

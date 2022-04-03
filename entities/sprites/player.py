@@ -1,5 +1,6 @@
 from entities.sprites.bullet import Bullet
 from entities.sprites.effects.muzzle_flash import MuzzleFlash
+from entities.sprites.effects.smoke_cloud import SmokeCloud
 from entities.sprites.utils import *
 
 
@@ -81,3 +82,5 @@ class Player(pg.sprite.Sprite):
         self.hit_rect.centery = self.pos.y
         self.hit_obstacle = collide_with_group(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
+        if self.hit_obstacle:
+            SmokeCloud(self.game, self.pos)
