@@ -84,3 +84,8 @@ class Player(pg.sprite.Sprite):
         self.rect.center = self.hit_rect.center
         if self.hit_obstacle:
             SmokeCloud(self.game, self.pos)
+
+    def add_health(self, amount):
+        self.health += amount
+        if self.health > PLAYER_HEALTH:
+            self.health = PLAYER_HEALTH

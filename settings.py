@@ -93,6 +93,8 @@ PLAYER_LAYER = 2
 BULLET_LAYER = 3
 MOB_LAYER = 2
 EFFECTS_LAYER = 4
+ITEMS_LAYER = 1
 
 # define items
 ITEM_IMAGES = {"health": "PNG\\Items\\health_pack.png"}
+HEALTH_PACK_AMOUNT = 20

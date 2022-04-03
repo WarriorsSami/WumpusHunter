@@ -5,6 +5,7 @@ from entities.camera import Camera
 from entities.sprites.effects.blood_scratch import BloodScratch
 from entities.sprites.effects.blood_splash import BloodSplash
 from entities.sprites.effects.i_visual_effect import IVisualEffect
+from entities.sprites.item import Item
 from entities.sprites.mob import Mob
 from entities.sprites.obstacle import Obstacle
 from entities.sprites.player import Player
@@ -139,12 +140,16 @@ class Game:
         #             Mob(self, col, row)
 
         for tile_object in self.map.tmx_data.objects:
+            obj_center = vec(tile_object.x + tile_object.width / 2,
+                             tile_object.y + tile_object.height / 2)
             if tile_object.name == 'player':
-                self.player = Player(self, tile_object.x, tile_object.y)
+                self.player = Player(self, obj_center.x, obj_center.y)
             elif tile_object.name == 'wall':
                 Obstacle(self, tile_object.x, tile_object.y, tile_object.width, tile_object.height)
             elif tile_object.name == 'mob':
-                Mob(self, tile_object.x, tile_object.y)
+                Mob(self, obj_center.x, obj_center.y)
+            elif tile_object.name in list(ITEM_IMAGES.keys()):
+                Item(self, obj_center, tile_object.name)
 
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
@@ -181,6 +186,13 @@ class Game:
         color = BLACK if not self.player.hit_mob else RED
         self.hit_mob_text_rect = self.font.render(f'M: {self.player.hit_mob}', True, color)
 
+        # player hits items
+        hits: list[Item] = pg.sprite.spritecollide(self.player, self.items, False)
+        for hit in hits:
+            if hit.item_type == 'health' and self.player.health < PLAYER_HEALTH:
+                hit.kill()
+                self.player.add_health(HEALTH_PACK_AMOUNT)
+
         # bullet hits mob
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         for hit in hits:
@@ -191,7 +203,7 @@ class Game:
                 BloodSplash(self, hit.pos + FLASH_OFFSET)
 
         # mob hits player
-        hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
+        hits: list[Mob] = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
             self.player.health -= MOB_DAMAGE
             self.player.score += COLLIDE_WITH_MOB_PENALTY
