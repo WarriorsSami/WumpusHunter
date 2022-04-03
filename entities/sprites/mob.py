@@ -22,6 +22,7 @@ class Mob(pg.sprite.Sprite):
         self.speed = choice(MOB_SPEEDS)
         self.fade = True
         self.alpha = 255
+        self.target = game.player
 
     def avoid_mobs(self):
         for mob in self.game.mobs:
@@ -31,38 +32,41 @@ class Mob(pg.sprite.Sprite):
                     self.acc += dist.normalize()
 
     def update(self):
-        # rotate mob to face player
-        self.rot = (self.game.player.pos - self.pos).angle_to(vec(1, 0))
-        self.image = pg.transform.rotate(self.game.mob_img, self.rot)
-        self.rect = self.image.get_rect()
-        self.rect.center = self.pos
+        # get the distance between the mob and the player
+        target_dist = self.target.pos - self.pos
+        if target_dist.length_squared() < MOB_DETECT_RADIUS ** 2:
+            # rotate mob to face player
+            self.rot = target_dist.angle_to(vec(1, 0))
+            self.image = pg.transform.rotate(self.game.mob_img, self.rot)
+            self.rect = self.image.get_rect()
+            self.rect.center = self.pos
 
-        # accelerate mob movement towards player and
-        # keep it away from other nearby mobs
-        self.acc = vec(1, 0).rotate(-self.rot)
-        self.avoid_mobs()
-        self.acc.scale_to_length(self.speed)
-        # apply friction
-        self.acc += self.vel * -1
-        self.vel += self.acc * self.game.dt
-        # apply the 2nd equation of motion
-        self.pos += self.vel * self.game.dt + 0.5 * self.acc * self.game.dt ** 2
+            # accelerate mob movement towards player and
+            # keep it away from other nearby mobs
+            self.acc = vec(1, 0).rotate(-self.rot)
+            self.avoid_mobs()
+            self.acc.scale_to_length(self.speed)
+            # apply friction
+            self.acc += self.vel * -1
+            self.vel += self.acc * self.game.dt
+            # apply the 2nd equation of motion
+            self.pos += self.vel * self.game.dt + 0.5 * self.acc * self.game.dt ** 2
 
-        # apply collision
-        self.hit_rect.centerx = self.pos.x
-        collide_with_group(self, self.game.walls, 'x')
-        self.hit_rect.centery = self.pos.y
-        collide_with_group(self, self.game.walls, 'y')
-        self.rect.center = self.hit_rect.center
-        if self.health <= 0:
-            if self.fade:
-                self.alpha = max(0, self.alpha - MOB_FADE_RATE)
-                self.image.set_alpha(self.alpha)
-                if self.alpha <= 0:
+            # apply collision
+            self.hit_rect.centerx = self.pos.x
+            collide_with_group(self, self.game.walls, 'x')
+            self.hit_rect.centery = self.pos.y
+            collide_with_group(self, self.game.walls, 'y')
+            self.rect.center = self.hit_rect.center
+            if self.health <= 0:
+                if self.fade:
+                    self.alpha = max(0, self.alpha - MOB_FADE_RATE)
+                    self.image.set_alpha(self.alpha)
+                    if self.alpha <= 0:
+                        self.kill()
+                else:
                     self.kill()
-            else:
-                self.kill()
-            self.game.player.score += KILL_MOB_AWARD
+                self.game.player.score += KILL_MOB_AWARD
 
     def draw_health(self):
         if self.health > 2 * MOB_HEALTH / 3:
