@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="64" tileheight="64" infinite="0" nextlayerid="7" nextobjectid="121">
+<map version="1.8" tiledversion="1.8.4" orientation="orthogonal" renderorder="right-down" width="50" height="30" tilewidth="64" tileheight="64" infinite="0" nextlayerid="7" nextobjectid="126">
  <tileset firstgid="1" name="spritesheet_tiles" tilewidth="64" tileheight="64" spacing="10" tilecount="540" columns="27">
   <image source="spritesheet_tiles.png" width="1988" height="1470"/>
  </tileset>
@@ -202,5 +202,10 @@
   <object id="118" name="wall" x="0" y="16" width="45.1272" height="1888"/>
   <object id="119" name="wall" x="3136" y="16" width="61.1272" height="1888"/>
   <object id="120" name="health" x="208" y="336" width="32" height="32"/>
+  <object id="121" name="health" x="720" y="528" width="32" height="32"/>
+  <object id="122" name="health" x="1104" y="720" width="32" height="32"/>
+  <object id="123" name="health" x="1680" y="848" width="32" height="32"/>
+  <object id="124" name="health" x="1232" y="1040" width="32" height="32"/>
+  <object id="125" name="health" x="784" y="1424" width="32" height="32"/>
  </objectgroup>
 </map>
