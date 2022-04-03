@@ -66,6 +66,7 @@ MOB_HEALTH = 100
 MOB_DAMAGE = 10
 MOB_KNOCK_BACK = 20
 MOB_AVOID_RADIUS = 50
+MOB_FADE_RATE = 10
 
 # define visual effects
 MUZZLE_FLASHES = ["PNG\\Puff\\whitePuff15.png", "PNG\\Puff\\whitePuff16.png",

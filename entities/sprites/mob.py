@@ -20,6 +20,8 @@ class Mob(pg.sprite.Sprite):
         self.health = MOB_HEALTH
         self.health_bar = None
         self.speed = choice(MOB_SPEEDS)
+        self.fade = True
+        self.alpha = 255
 
     def avoid_mobs(self):
         for mob in self.game.mobs:
@@ -53,7 +55,13 @@ class Mob(pg.sprite.Sprite):
         collide_with_group(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
         if self.health <= 0:
-            self.kill()
+            if self.fade:
+                self.alpha = max(0, self.alpha - MOB_FADE_RATE)
+                self.image.set_alpha(self.alpha)
+                if self.alpha <= 0:
+                    self.kill()
+            else:
+                self.kill()
             self.game.player.score += KILL_MOB_AWARD
 
     def draw_health(self):
