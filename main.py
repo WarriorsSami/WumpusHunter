@@ -72,12 +72,16 @@ class Game:
         self.map_rect = None
         self.map = None
 
+        self.items = None
+
         self.camera = None
 
         self.gun_flashes = []
         self.blood_splashes = []
         self.blood_scratches = []
         self.smoke_clouds = []
+
+        self.item_images = {}
 
         self.load_data()
 
@@ -109,6 +113,10 @@ class Game:
         for img in SMOKE_CLOUDS:
             self.smoke_clouds.append(pg.image.load(path.join(assets_folder, img)).convert_alpha())
 
+        # load the assets for items
+        for item in ITEM_IMAGES:
+            self.item_images[item] = pg.image.load(path.join(assets_folder, ITEM_IMAGES[item])).convert_alpha()
+
     def show_performance(self):
         self.screen.blit(self.score_text_rect, (WIDTH - 400, 10))
         self.screen.blit(self.hit_obstacle_text_rect, (WIDTH - 400, 50))
@@ -119,6 +127,7 @@ class Game:
         self.walls = pg.sprite.Group()
         self.mobs = pg.sprite.Group()
         self.bullets = pg.sprite.Group()
+        self.items = pg.sprite.Group()
 
         # for row, tiles in enumerate(self.map.data):
         #     for col, tile in enumerate(tiles):
