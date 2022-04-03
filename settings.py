@@ -49,7 +49,7 @@ KILL_MOB_AWARD = 100
 # gun settings
 BULLET_IMG = "PNG\\Tiles\\tile_214.png"
 BULLET_SPEED = 500
-BULLET_LIFETIME = 800
+BULLET_LIFETIME = 1000
 BULLET_RATE = 150
 BULLET_WIDTH = 20
 BULLET_HEIGHT = 20
@@ -67,7 +67,7 @@ MOB_DAMAGE = 10
 MOB_KNOCK_BACK = 20
 MOB_AVOID_RADIUS = 50
 MOB_FADE_RATE = 10
-MOB_DETECT_RADIUS = 400
+MOB_DETECT_RADIUS = 600
 
 # define visual effects
 MUZZLE_FLASHES = ["PNG\\Puff\\whitePuff15.png", "PNG\\Puff\\whitePuff16.png",
@@ -102,3 +102,18 @@ ITEM_IMAGES = {"health": "PNG\\Items\\health_pack.png"}
 HEALTH_PACK_AMOUNT = 20
 BOB_RANGE = 15
 BOB_SPEED = 0.4
+
+# define sounds
+BG_MUSIC = "espionage.ogg"
+PLAYER_HIT_SOUNDS = ["sound\\pain\\8.wav", "sound\\pain\\9.wav", "sound\\pain\\10.wav", "sound\\pain\\11.wav",
+                     "sound\\pain\\12.wav", "sound\\pain\\13.wav", "sound\\pain\\14.wav"]
+MOB_HIT_SOUNDS = ["sound\\splat.wav"]
+MOB_MOAN_SOUNDS = ["sound\\roar\\zombie-roar-1.wav", "sound\\roar\\zombie-roar-2.wav", "sound\\roar\\zombie-roar-3.wav",
+                   "sound\\roar\\zombie-roar-4.wav", "sound\\roar\\zombie-roar-5.wav", "sound\\roar\\zombie-roar-6.wav",
+                   "sound\\roar\\zombie-roar-7.wav", "sound\\roar\\zombie-roar-8.wav", "sound\\roar\\zombie-roar-9.wav",
+                   "sound\\roar\\zombie-roar-10.wav"]
+WEAPON_SOUNDS_GUN = ["sound\\gun\\weapon_single_shot.wav"]
+WEAPON_SOUNDS_SHOTGUN = ["sound\\gun\\shotgun.wav"]
+EFFECTS_SOUNDS = {"level_start": "sound\\level_start.wav",
+                  "health_up": "sound\\health_pack.wav",
+                  "wall_hit": "sound\\wall_hit.wav"}

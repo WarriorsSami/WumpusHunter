@@ -1,5 +1,6 @@
 import sys
 from os import path
+from random import random
 
 from entities.camera import Camera
 from entities.sprites.effects.blood_scratch import BloodScratch
@@ -84,12 +85,19 @@ class Game:
 
         self.item_images = {}
 
+        self.effects_sounds = {}
+        self.weapon_sounds = {}
+        self.mob_moan_sounds = []
+        self.player_hit_sounds = []
+        self.mob_hit_sounds = []
+
         self.load_data()
 
     def load_data(self):
         game_folder = path.dirname(__file__)
         assets_folder = path.join(game_folder, 'assets')
         maps_folder = path.join(game_folder, 'maps/tiled_maps')
+        music_folder = path.join(assets_folder, 'music')
 
         self.map = TiledMap(path.join(maps_folder, 'level1.tmx'))
         self.map_img = self.map.make_map()
@@ -117,6 +125,30 @@ class Game:
         # load the assets for items
         for item in ITEM_IMAGES:
             self.item_images[item] = pg.image.load(path.join(assets_folder, ITEM_IMAGES[item])).convert_alpha()
+
+        # load sounds and music
+        pg.mixer.music.load(path.join(music_folder, BG_MUSIC))
+        for sound in EFFECTS_SOUNDS:
+            snd = pg.mixer.Sound(path.join(music_folder, EFFECTS_SOUNDS[sound]))
+            snd.set_volume(0.4)
+            self.effects_sounds[sound] = snd
+
+        self.weapon_sounds['gun'] = []
+        for sound in WEAPON_SOUNDS_GUN:
+            self.weapon_sounds['gun'].append(pg.mixer.Sound(path.join(music_folder, sound)))
+
+        for sound in MOB_MOAN_SOUNDS:
+            snd = pg.mixer.Sound(path.join(music_folder, sound))
+            snd.set_volume(0.1)
+            self.mob_moan_sounds.append(snd)
+
+        for sound in PLAYER_HIT_SOUNDS:
+            self.player_hit_sounds.append(pg.mixer.Sound(path.join(music_folder, sound)))
+
+        for sound in MOB_HIT_SOUNDS:
+            snd = pg.mixer.Sound(path.join(music_folder, sound))
+            snd.set_volume(0.2)
+            self.mob_hit_sounds.append(snd)
 
     def show_performance(self):
         self.screen.blit(self.score_text_rect, (WIDTH - 400, 10))
@@ -153,6 +185,7 @@ class Game:
 
         self.camera = Camera(self.map.width, self.map.height)
         self.draw_debug = False
+        self.effects_sounds['level_start'].play()
 
         self.score_text_rect = self.font.render(f'Current score: {self.player.score}', True, BLACK)
         self.hit_obstacle_text_rect = self.font.render(f'W: {self.player.hit_obstacle}', True, BLACK)
@@ -160,6 +193,7 @@ class Game:
 
     def run(self):
         self.playing = True
+        pg.mixer.music.play(loops=-1)
         while self.playing:
             self.dt = self.clock.tick(FPS) / 1000
             self.events()
@@ -191,6 +225,7 @@ class Game:
         for hit in hits:
             if hit.item_type == 'health' and self.player.health < PLAYER_HEALTH:
                 hit.kill()
+                self.effects_sounds['health_up'].play()
                 self.player.add_health(HEALTH_PACK_AMOUNT)
 
         # bullet hits mob
@@ -205,6 +240,8 @@ class Game:
         # mob hits player
         hits: list[Mob] = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
+            if random() < 0.8:
+                choice(self.player_hit_sounds).play()
             self.player.health -= MOB_DAMAGE
             self.player.score += COLLIDE_WITH_MOB_PENALTY
             BloodScratch(self, self.player.pos + SCRATCH_OFFSET)

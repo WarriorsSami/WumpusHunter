@@ -1,3 +1,5 @@
+from random import random
+
 from entities.sprites.utils import *
 
 
@@ -7,7 +9,7 @@ class Mob(pg.sprite.Sprite):
         self.groups = game.all_sprites, game.mobs
         pg.sprite.Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = game.mob_img
+        self.image = game.mob_img.copy()
         self.rect = self.image.get_rect()
         self.rect.center = (x, y)
         self.hit_rect = MOB_HIT_RECT.copy()
@@ -35,6 +37,8 @@ class Mob(pg.sprite.Sprite):
         # get the distance between the mob and the player
         target_dist = self.target.pos - self.pos
         if target_dist.length_squared() < MOB_DETECT_RADIUS ** 2:
+            if random() < 0.02:
+                choice(self.game.mob_moan_sounds).play()
             # rotate mob to face player
             self.rot = target_dist.angle_to(vec(1, 0))
             self.image = pg.transform.rotate(self.game.mob_img, self.rot)
@@ -66,6 +70,7 @@ class Mob(pg.sprite.Sprite):
                         self.kill()
                 else:
                     self.kill()
+                choice(self.game.mob_hit_sounds).play()
                 self.game.player.score += KILL_MOB_AWARD
 
     def draw_health(self):

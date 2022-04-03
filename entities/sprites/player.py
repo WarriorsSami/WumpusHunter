@@ -1,3 +1,5 @@
+from random import random
+
 from entities.sprites.bullet import Bullet
 from entities.sprites.effects.muzzle_flash import MuzzleFlash
 from entities.sprites.effects.smoke_cloud import SmokeCloud
@@ -57,6 +59,7 @@ class Player(pg.sprite.Sprite):
                 Bullet(self.game, pos, dir_vec)
                 self.vel = vec(-KICKBACK, 0).rotate(-self.rot)
                 self.score += SHOT_PENALTY
+                choice(self.game.weapon_sounds['gun']).play()
                 MuzzleFlash(self.game, pos)
 
         if self.vel.x != 0 and self.vel.y != 0:
@@ -83,6 +86,8 @@ class Player(pg.sprite.Sprite):
         self.hit_obstacle = collide_with_group(self, self.game.walls, 'y')
         self.rect.center = self.hit_rect.center
         if self.hit_obstacle:
+            if random() < 0.1:
+                self.game.effects_sounds['wall_hit'].play()
             SmokeCloud(self.game, self.pos)
 
     def add_health(self, amount):
