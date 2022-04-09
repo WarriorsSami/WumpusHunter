@@ -33,6 +33,7 @@ class Player(pg.sprite.Sprite):
         self.hit_mob = False
         self.last_hit_mob = 0
         self.hit_treasure = False
+        self.last_hit_treasure = 0
 
     def get_keys(self):
         self.rot_speed = 0
@@ -68,8 +69,10 @@ class Player(pg.sprite.Sprite):
 
     def update(self):
         self.get_keys()
-        if pg.time.get_ticks() - self.last_hit_mob > HIT_MOB_FLAG_LIFETIME:
+        if pg.time.get_ticks() - self.last_hit_mob > HIT_FLAG_LIFETIME:
             self.hit_mob = False
+        if pg.time.get_ticks() - self.last_hit_treasure > HIT_FLAG_LIFETIME:
+            self.hit_treasure = False
 
         # apply rotation and linear velocity
         self.rot = (self.rot + self.rot_speed * self.game.dt) % 360

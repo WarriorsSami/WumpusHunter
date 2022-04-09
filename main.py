@@ -154,6 +154,7 @@ class Game:
         self.screen.blit(self.score_text_rect, (WIDTH - 400, 10))
         self.screen.blit(self.hit_obstacle_text_rect, (WIDTH - 400, 50))
         self.screen.blit(self.hit_mob_text_rect, (WIDTH - 260, 50))
+        self.screen.blit(self.hit_treasure_text_rect, (WIDTH - 120, 50))
 
     def new(self):
         self.all_sprites = pg.sprite.LayeredUpdates()
@@ -190,6 +191,7 @@ class Game:
         self.score_text_rect = self.font.render(f'Current score: {self.player.score}', True, BLACK)
         self.hit_obstacle_text_rect = self.font.render(f'W: {self.player.hit_obstacle}', True, BLACK)
         self.hit_mob_text_rect = self.font.render(f'M: {self.player.hit_mob}', True, BLACK)
+        self.hit_treasure_text_rect = self.font.render(f'T: {self.player.hit_treasure}', True, BLACK)
 
     def run(self):
         self.playing = True
@@ -219,6 +221,9 @@ class Game:
         # display hit mob flag on screen
         color = BLACK if not self.player.hit_mob else RED
         self.hit_mob_text_rect = self.font.render(f'M: {self.player.hit_mob}', True, color)
+        # display hit treasure flag on screen
+        color = BLACK if not self.player.hit_treasure else RED
+        self.hit_treasure_text_rect = self.font.render(f'T: {self.player.hit_treasure}', True, color)
 
         # player hits items
         hits: list[Item] = pg.sprite.spritecollide(self.player, self.items, False)
@@ -227,6 +232,8 @@ class Game:
                 hit.kill()
                 self.effects_sounds['health_up'].play()
                 self.player.add_health(HEALTH_PACK_AMOUNT)
+                self.player.hit_treasure = True
+                self.player.last_hit_treasure = pg.time.get_ticks()
 
         # bullet hits mob
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
