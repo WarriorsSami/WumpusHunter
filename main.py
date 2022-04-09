@@ -42,17 +42,13 @@ class Game:
 
         self.flag_font = None
         self.title_font = None
-        self.score_text_rect = None
-
-        self.hit_obstacle_text_rect = None
-        self.hit_mob_text_rect = None
-        self.hit_treasure_text_rect = None
 
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
         self.clock = pg.time.Clock()
         pg.key.set_repeat(500, 100)
 
+        self.dim_screen = None
         self.all_sprites = None
         self.draw_debug = False
 
@@ -106,6 +102,9 @@ class Game:
 
         self.title_font = path.join(assets_folder, 'fonts/ZOMBIE.ttf')
         self.flag_font = path.join(assets_folder, 'fonts/FLAG.ttf')
+
+        self.dim_screen = pg.Surface(self.screen.get_size()).convert_alpha()
+        self.dim_screen.fill((0, 0, 0, 180))
 
         self.map = TiledMap(path.join(maps_folder, 'level1.tmx'))
         self.map_img = self.map.make_map()
@@ -318,6 +317,7 @@ class Game:
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
 
         if self.paused:
+            self.screen.blit(self.dim_screen, (0, 0))
             self.draw_text("Paused", self.title_font, TITLE_FONT_SIZE, RED, WIDTH / 2, HEIGHT / 2, align="center")
         pg.display.flip()
 
