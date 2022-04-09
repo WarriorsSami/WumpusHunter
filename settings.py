@@ -119,7 +119,10 @@ EFFECTS_LAYER = 4
 ITEMS_LAYER = 1
 
 # define items
-ITEM_IMAGES = {"health": "PNG\\Items\\health_pack.png"}
+ITEM_IMAGES = {
+    "health": "PNG\\Items\\health_pack.png",
+    "shotgun": "PNG\\Items\\shotgun.png"
+}
 HEALTH_PACK_AMOUNT = 20
 BOB_RANGE = 15
 BOB_SPEED = 0.4
@@ -137,9 +140,12 @@ WEAPON_SOUNDS = {
     "pistol": ["sound\\gun\\pistol.wav"],
     "shotgun": ["sound\\gun\\shotgun.wav"]
 }
-EFFECTS_SOUNDS = {"level_start": "sound\\level_start.wav",
-                  "health_up": "sound\\health_pack.wav",
-                  "wall_hit": "sound\\wall_hit.wav"}
+EFFECTS_SOUNDS = {
+    "level_start": "sound\\level_start.wav",
+    "health_up": "sound\\health_pack.wav",
+    "wall_hit": "sound\\wall_hit.wav",
+    "gun_pickup": "sound\\gun\\gun_pickup.wav"
+}
 
 # font settings
 FLAG_FONT_SIZE = 30

@@ -244,6 +244,10 @@ class Game:
                 self.player.add_health(HEALTH_PACK_AMOUNT)
                 self.player.hit_treasure = True
                 self.player.last_hit_treasure = pg.time.get_ticks()
+            elif hit.item_type == 'shotgun' and self.player.weapon != 'shotgun':
+                hit.kill()
+                self.effects_sounds['gun_pickup'].play()
+                self.player.weapon = 'shotgun'
 
         # bullet hits mob
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)

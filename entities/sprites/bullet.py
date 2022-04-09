@@ -12,7 +12,7 @@ class Bullet(pg.sprite.Sprite):
         self.hit_rect = self.rect
         self.pos = vec(pos)
         self.rect.center = pos
-        self.vel = dir_vec * WEAPONS[game.player.weapon]['bullet_speed']
+        self.vel = dir_vec * WEAPONS[game.player.weapon]['bullet_speed'] * uniform(0.9, 1.1)
         self.spawn_time = pg.time.get_ticks()
 
     def update(self):
