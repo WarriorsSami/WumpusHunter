@@ -135,7 +135,9 @@ class Game:
 
         self.weapon_sounds['gun'] = []
         for sound in WEAPON_SOUNDS_GUN:
-            self.weapon_sounds['gun'].append(pg.mixer.Sound(path.join(music_folder, sound)))
+            snd = pg.mixer.Sound(path.join(music_folder, sound))
+            snd.set_volume(0.2)
+            self.weapon_sounds['gun'].append(snd)
 
         for sound in MOB_MOAN_SOUNDS:
             snd = pg.mixer.Sound(path.join(music_folder, sound))

@@ -112,7 +112,7 @@ MOB_MOAN_SOUNDS = ["sound\\roar\\zombie-roar-1.wav", "sound\\roar\\zombie-roar-2
                    "sound\\roar\\zombie-roar-4.wav", "sound\\roar\\zombie-roar-5.wav", "sound\\roar\\zombie-roar-6.wav",
                    "sound\\roar\\zombie-roar-7.wav", "sound\\roar\\zombie-roar-8.wav", "sound\\roar\\zombie-roar-9.wav",
                    "sound\\roar\\zombie-roar-10.wav"]
-WEAPON_SOUNDS_GUN = ["sound\\gun\\weapon_single_shot.wav"]
+WEAPON_SOUNDS_GUN = ["sound\\gun\\pistol.wav"]
 WEAPON_SOUNDS_SHOTGUN = ["sound\\gun\\shotgun.wav"]
 EFFECTS_SOUNDS = {"level_start": "sound\\level_start.wav",
                   "health_up": "sound\\health_pack.wav",
