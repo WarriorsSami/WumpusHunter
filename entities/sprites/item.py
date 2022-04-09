@@ -10,6 +10,7 @@ class Item(pg.sprite.Sprite):
         self.game = game
         self.image = game.item_images[item_type]
         self.rect = self.image.get_rect()
+        self.hit_rect = self.rect
         self.item_type = item_type
         self.pos = pos
         self.rect.center = pos

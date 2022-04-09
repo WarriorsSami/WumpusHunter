@@ -120,3 +120,7 @@ WEAPON_SOUNDS_SHOTGUN = ["sound\\gun\\shotgun.wav"]
 EFFECTS_SOUNDS = {"level_start": "sound\\level_start.wav",
                   "health_up": "sound\\health_pack.wav",
                   "wall_hit": "sound\\wall_hit.wav"}
+
+# font settings
+FLAG_FONT_SIZE = 30
+TITLE_FONT_SIZE = 100

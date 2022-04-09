@@ -40,7 +40,8 @@ class Game:
         pg.init()
         pg.font.init()
 
-        self.font = pg.font.SysFont('Comic Sans MS', 30)
+        self.flag_font = None
+        self.title_font = None
         self.score_text_rect = None
 
         self.hit_obstacle_text_rect = None
@@ -69,6 +70,7 @@ class Game:
 
         self.playing = False
         self.dt = None
+        self.paused = False
 
         self.map_img = None
         self.map_rect = None
@@ -101,6 +103,9 @@ class Game:
         assets_folder = path.join(game_folder, 'assets')
         maps_folder = path.join(game_folder, 'maps/tiled_maps')
         music_folder = path.join(assets_folder, 'music')
+
+        self.title_font = path.join(assets_folder, 'fonts/ZOMBIE.ttf')
+        self.flag_font = path.join(assets_folder, 'fonts/FLAG.ttf')
 
         self.map = TiledMap(path.join(maps_folder, 'level1.tmx'))
         self.map_img = self.map.make_map()
@@ -161,10 +166,20 @@ class Game:
             self.mob_hit_sounds.append(snd)
 
     def show_performance(self):
-        self.screen.blit(self.score_text_rect, (WIDTH - 400, 10))
-        self.screen.blit(self.hit_obstacle_text_rect, (WIDTH - 400, 50))
-        self.screen.blit(self.hit_mob_text_rect, (WIDTH - 260, 50))
-        self.screen.blit(self.hit_treasure_text_rect, (WIDTH - 120, 50))
+        # display score on screen
+        self.draw_text(f'Current Score: {self.player.score}', self.flag_font, FLAG_FONT_SIZE, BLACK, WIDTH - 400, 10)
+
+        # display hit obstacle flag on screen
+        color = BLACK if not self.player.hit_obstacle else RED
+        self.draw_text(f'W: {self.player.hit_obstacle}', self.flag_font, FLAG_FONT_SIZE, color, WIDTH - 400, 50)
+
+        # display hit mob flag on screen
+        color = BLACK if not self.player.hit_mob else RED
+        self.draw_text(f'M: {self.player.hit_mob}', self.flag_font, FLAG_FONT_SIZE, color, WIDTH - 260, 50)
+
+        # display hit treasure flag on screen
+        color = BLACK if not self.player.hit_treasure else RED
+        self.draw_text(f'T: {self.player.hit_treasure}', self.flag_font, FLAG_FONT_SIZE, color, WIDTH - 120, 50)
 
     def new(self):
         self.all_sprites = pg.sprite.LayeredUpdates()
@@ -195,13 +210,7 @@ class Game:
                 Item(self, obj_center, tile_object.name)
 
         self.camera = Camera(self.map.width, self.map.height)
-        self.draw_debug = False
         self.effects_sounds['level_start'].play()
-
-        self.score_text_rect = self.font.render(f'Current score: {self.player.score}', True, BLACK)
-        self.hit_obstacle_text_rect = self.font.render(f'W: {self.player.hit_obstacle}', True, BLACK)
-        self.hit_mob_text_rect = self.font.render(f'M: {self.player.hit_mob}', True, BLACK)
-        self.hit_treasure_text_rect = self.font.render(f'T: {self.player.hit_treasure}', True, BLACK)
 
     def run(self):
         self.playing = True
@@ -209,7 +218,8 @@ class Game:
         while self.playing:
             self.dt = self.clock.tick(FPS) / 1000
             self.events()
-            self.update()
+            if not self.paused:
+                self.update()
             self.draw()
 
     @staticmethod
@@ -221,19 +231,6 @@ class Game:
         # update all sprites
         self.all_sprites.update()
         self.camera.update(self.player)
-
-        # display score on screen
-        self.score_text_rect = self.font.render(f'Current score: {self.player.score}', True, BLACK)
-
-        # display hit obstacle flag on screen
-        color = BLACK if not self.player.hit_obstacle else RED
-        self.hit_obstacle_text_rect = self.font.render(f'W: {self.player.hit_obstacle}', True, color)
-        # display hit mob flag on screen
-        color = BLACK if not self.player.hit_mob else RED
-        self.hit_mob_text_rect = self.font.render(f'M: {self.player.hit_mob}', True, color)
-        # display hit treasure flag on screen
-        color = BLACK if not self.player.hit_treasure else RED
-        self.hit_treasure_text_rect = self.font.render(f'T: {self.player.hit_treasure}', True, color)
 
         # player hits items
         hits: list[Item] = pg.sprite.spritecollide(self.player, self.items, False)
@@ -270,6 +267,30 @@ class Game:
             self.player.hit_mob = True
             self.player.last_hit_mob = pg.time.get_ticks()
 
+    def draw_text(self, text, font_name, size, color, x, y, align="nw"):
+        font = pg.font.Font(font_name, size)
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        if align == "nw":
+            text_rect.topleft = (x, y)
+        if align == "ne":
+            text_rect.topright = (x, y)
+        if align == "sw":
+            text_rect.bottomleft = (x, y)
+        if align == "se":
+            text_rect.bottomright = (x, y)
+        if align == "n":
+            text_rect.midtop = (x, y)
+        if align == "s":
+            text_rect.midbottom = (x, y)
+        if align == "e":
+            text_rect.midright = (x, y)
+        if align == "w":
+            text_rect.midleft = (x, y)
+        if align == "center":
+            text_rect.center = (x, y)
+        self.screen.blit(text_surface, text_rect)
+
     def draw_grid(self):
         # draw vertical lines
         for x in range(0, WIDTH, TILE_SIZE):
@@ -293,9 +314,11 @@ class Game:
         if self.draw_debug:
             for wall in self.walls:
                 pg.draw.rect(self.screen, CYAN, self.camera.apply_rect(wall.rect), 1)
-        # pg.draw.rect(self.screen, WHITE, self.player.hit_rect, 2)
         self.show_performance()
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
+
+        if self.paused:
+            self.draw_text("Paused", self.title_font, TITLE_FONT_SIZE, RED, WIDTH / 2, HEIGHT / 2, align="center")
         pg.display.flip()
 
     def events(self):
@@ -307,6 +330,8 @@ class Game:
                     self.quit()
                 if event.key == pg.K_F1:
                     self.draw_debug = not self.draw_debug
+                if event.key == pg.K_p:
+                    self.paused = not self.paused
 
     def show_start_screen(self):
         pass
