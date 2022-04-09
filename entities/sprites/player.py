@@ -35,6 +35,8 @@ class Player(pg.sprite.Sprite):
         self.hit_treasure = False
         self.last_hit_treasure = 0
 
+        self.weapon = 'pistol'
+
     def get_keys(self):
         self.rot_speed = 0
         self.vel = vec(0, 0)
@@ -52,20 +54,30 @@ class Player(pg.sprite.Sprite):
                 self.vel = vec(-PLAYER_SPEED / 2, 0).rotate(-self.rot)
         # shoot
         if keys[pg.K_SPACE]:
-            now = pg.time.get_ticks()
-            if now - self.last_shot > BULLET_RATE:
-                self.last_shot = now
-                dir_vec = vec(1, 0).rotate(-self.rot)
-                pos = self.pos + BARREL_OFFSET.rotate(-self.rot)
-                Bullet(self.game, pos, dir_vec)
-                self.vel = vec(-KICKBACK, 0).rotate(-self.rot)
-                self.score += SHOT_PENALTY
-                choice(self.game.weapon_sounds['gun']).play()
-                MuzzleFlash(self.game, pos)
+            self.shoot()
 
         if self.vel.x != 0 and self.vel.y != 0:
             self.vel.x *= 0.7071
             self.vel.y *= 0.7071
+
+    def shoot(self):
+        now = pg.time.get_ticks()
+        if now - self.last_shot > WEAPONS[self.weapon]['rate']:
+            self.last_shot = now
+            dir_vec = vec(1, 0).rotate(-self.rot)
+            pos = self.pos + BARREL_OFFSET.rotate(-self.rot)
+            self.vel = vec(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rot)
+
+            for _ in range(WEAPONS[self.weapon]['bullet_count']):
+                self.score += SHOT_PENALTY
+                spread = uniform(-WEAPONS[self.weapon]['spread'], WEAPONS[self.weapon]['spread'])
+                Bullet(self.game, pos, dir_vec.rotate(spread))
+                snd = choice(self.game.weapon_sounds[self.weapon])
+                if snd.get_num_channels() >= 2:
+                    snd.stop()
+                snd.play()
+
+            MuzzleFlash(self.game, pos)
 
     def update(self):
         self.get_keys()

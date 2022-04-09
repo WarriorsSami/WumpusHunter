@@ -37,6 +37,7 @@ def draw_player_health(surf, x, y, pct):
 
 class Game:
     def __init__(self):
+        pg.mixer.pre_init(44100, -16, 1, 4096)
         pg.init()
         pg.font.init()
 
@@ -61,7 +62,7 @@ class Game:
         self.mob_img = None
         self.mobs = None
 
-        self.bullet_img = None
+        self.bullets_img = {}
         self.bullets = None
 
         self.playing = False
@@ -113,8 +114,9 @@ class Game:
         self.player_img = pg.image.load(path.join(assets_folder, PLAYER_IMG)).convert_alpha()
         self.mob_img = pg.image.load(path.join(assets_folder, MOB_IMG)).convert_alpha()
 
-        self.bullet_img = pg.image.load(path.join(assets_folder, BULLET_IMG)).convert_alpha()
-        self.bullet_img = pg.transform.scale(self.bullet_img, (BULLET_WIDTH, BULLET_HEIGHT))
+        temp_bullet_img = pg.image.load(path.join(assets_folder, BULLET_IMG)).convert_alpha()
+        self.bullets_img['lg'] = pg.transform.scale(temp_bullet_img, (BULLET_LG_WIDTH, BULLET_LG_HEIGHT))
+        self.bullets_img['sm'] = pg.transform.scale(temp_bullet_img, (BULLET_SM_WIDTH, BULLET_SM_HEIGHT))
 
         self.wall_img = pg.image.load(path.join(assets_folder, WALL_IMG)).convert_alpha()
         self.wall_img = pg.transform.scale(self.wall_img, (TILE_SIZE, TILE_SIZE))
@@ -145,11 +147,13 @@ class Game:
             snd.set_volume(0.4)
             self.effects_sounds[sound] = snd
 
-        self.weapon_sounds['gun'] = []
-        for sound in WEAPON_SOUNDS_GUN:
-            snd = pg.mixer.Sound(path.join(music_folder, sound))
-            snd.set_volume(0.2)
-            self.weapon_sounds['gun'].append(snd)
+        self.weapon_sounds = {}
+        for weapon in WEAPON_SOUNDS:
+            self.weapon_sounds[weapon] = []
+            for snd in WEAPON_SOUNDS[weapon]:
+                snd = pg.mixer.Sound(path.join(music_folder, snd))
+                snd.set_volume(0.1)
+                self.weapon_sounds[weapon].append(snd)
 
         for sound in MOB_MOAN_SOUNDS:
             snd = pg.mixer.Sound(path.join(music_folder, sound))
@@ -232,7 +236,7 @@ class Game:
         self.camera.update(self.player)
 
         # player hits items
-        hits: list[Item] = pg.sprite.spritecollide(self.player, self.items, False)
+        hits = pg.sprite.spritecollide(self.player, self.items, False)
         for hit in hits:
             if hit.item_type == 'health' and self.player.health < PLAYER_HEALTH:
                 hit.kill()
@@ -245,13 +249,13 @@ class Game:
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         for hit in hits:
             if isinstance(hit, Mob):
-                hit.health -= BULLET_DAMAGE
+                hit.health -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
                 hit.vel = vec(0, 0)
                 self.player.score += SHOT_MOB_AWARD
                 BloodSplash(self, hit.pos + FLASH_OFFSET)
 
         # mob hits player
-        hits: list[Mob] = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
+        hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
         for hit in hits:
             if random() < 0.8:
                 choice(self.player_hit_sounds).play()

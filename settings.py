@@ -46,17 +46,35 @@ TREASURE_AWARD = 1000
 SHOT_MOB_AWARD = 10
 KILL_MOB_AWARD = 100
 
-# gun settings
+# weapons settings
 BULLET_IMG = "PNG\\Tiles\\tile_214.png"
-BULLET_SPEED = 500
-BULLET_LIFETIME = 1000
-BULLET_RATE = 200
-BULLET_WIDTH = 20
-BULLET_HEIGHT = 20
-KICKBACK = 200
-GUN_SPREAD = 7
+WEAPONS = {
+    "pistol": {
+        "bullet_speed": 500,
+        "bullet_lifetime": 1000,
+        "rate": 200,
+        "kickback": 200,
+        "spread": 5,
+        "damage": 10,
+        "bullet_size": "lg",
+        "bullet_count": 1
+    },
+    "shotgun": {
+        "bullet_speed": 500,
+        "bullet_lifetime": 1000,
+        "rate": 900,
+        "kickback": 300,
+        "spread": 20,
+        "damage": 5,
+        "bullet_size": "sm",
+        "bullet_count": 12
+    }
+}
+BULLET_LG_WIDTH = 20
+BULLET_LG_HEIGHT = 20
+BULLET_SM_WIDTH = 10
+BULLET_SM_HEIGHT = 10
 BARREL_OFFSET = vec(30, 10)
-BULLET_DAMAGE = 10
 
 # mob settings
 MOB_IMG = "PNG\\Zombie 1\\zoimbie1_hold.png"
@@ -115,8 +133,10 @@ MOB_MOAN_SOUNDS = ["sound\\roar\\zombie-roar-1.wav", "sound\\roar\\zombie-roar-2
                    "sound\\roar\\zombie-roar-4.wav", "sound\\roar\\zombie-roar-5.wav", "sound\\roar\\zombie-roar-6.wav",
                    "sound\\roar\\zombie-roar-7.wav", "sound\\roar\\zombie-roar-8.wav", "sound\\roar\\zombie-roar-9.wav",
                    "sound\\roar\\zombie-roar-10.wav"]
-WEAPON_SOUNDS_GUN = ["sound\\gun\\pistol.wav"]
-WEAPON_SOUNDS_SHOTGUN = ["sound\\gun\\shotgun.wav"]
+WEAPON_SOUNDS = {
+    "pistol": ["sound\\gun\\pistol.wav"],
+    "shotgun": ["sound\\gun\\shotgun.wav"]
+}
 EFFECTS_SOUNDS = {"level_start": "sound\\level_start.wav",
                   "health_up": "sound\\health_pack.wav",
                   "wall_hit": "sound\\wall_hit.wav"}
