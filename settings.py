@@ -50,7 +50,7 @@ KILL_MOB_AWARD = 100
 BULLET_IMG = "PNG\\Tiles\\tile_214.png"
 BULLET_SPEED = 500
 BULLET_LIFETIME = 1000
-BULLET_RATE = 150
+BULLET_RATE = 200
 BULLET_WIDTH = 20
 BULLET_HEIGHT = 20
 KICKBACK = 200
@@ -88,6 +88,9 @@ SMOKE_CLOUDS = ["Particles\\PNG (Transparent)\\smoke_01.png", "Particles\\PNG (T
                 "Particles\\PNG (Transparent)\\smoke_07.png", "Particles\\PNG (Transparent)\\smoke_08.png",
                 "Particles\\PNG (Transparent)\\smoke_09.png", "Particles\\PNG (Transparent)\\smoke_10.png"]
 CLOUD_LIFETIME = 100
+
+SPLAT_GREEN = "Particles\\PNG (Transparent)\\splat green.png"
+SPLAT_RED = "Particles\\PNG (Transparent)\\splat red.png"
 
 # define layers
 WALL_LAYER = 1

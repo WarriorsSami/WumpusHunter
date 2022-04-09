@@ -83,6 +83,9 @@ class Game:
         self.blood_scratches = []
         self.smoke_clouds = []
 
+        self.splat_green_img = None
+        self.splat_red_img = None
+
         self.item_images = {}
 
         self.effects_sounds = {}
@@ -111,6 +114,11 @@ class Game:
 
         self.wall_img = pg.image.load(path.join(assets_folder, WALL_IMG)).convert_alpha()
         self.wall_img = pg.transform.scale(self.wall_img, (TILE_SIZE, TILE_SIZE))
+
+        self.splat_green_img = pg.image.load(path.join(assets_folder, SPLAT_GREEN)).convert_alpha()
+        self.splat_green_img = pg.transform.scale(self.splat_green_img, (TILE_SIZE, TILE_SIZE))
+        self.splat_red_img = pg.image.load(path.join(assets_folder, SPLAT_RED)).convert_alpha()
+        self.splat_red_img = pg.transform.scale(self.splat_red_img, (TILE_SIZE, TILE_SIZE))
 
         # load the assets for visual effects
         for img in MUZZLE_FLASHES:

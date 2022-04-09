@@ -22,7 +22,7 @@ class Mob(pg.sprite.Sprite):
         self.health = MOB_HEALTH
         self.health_bar = None
         self.speed = choice(MOB_SPEEDS)
-        self.fade = True
+        self.fade = False
         self.alpha = 255
         self.target = game.player
 
@@ -70,6 +70,7 @@ class Mob(pg.sprite.Sprite):
                         self.kill()
                 else:
                     self.kill()
+                    self.game.map_img.blit(self.game.splat_green_img, self.pos - vec(TILE_SIZE / 2, TILE_SIZE / 2))
                 choice(self.game.mob_hit_sounds).play()
                 self.game.player.score += KILL_MOB_AWARD
 
