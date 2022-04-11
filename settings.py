@@ -110,6 +110,8 @@ CLOUD_LIFETIME = 100
 SPLAT_GREEN = "Particles\\PNG (Transparent)\\splat green.png"
 SPLAT_RED = "Particles\\PNG (Transparent)\\splat red.png"
 
+DAMAGE_ALPHA = [i for i in range(0, 255, 55)]
+
 # define layers
 WALL_LAYER = 1
 PLAYER_LAYER = 2

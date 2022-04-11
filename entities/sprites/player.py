@@ -1,3 +1,4 @@
+from itertools import chain
 from random import random
 
 from entities.sprites.bullet import Bullet
@@ -28,6 +29,8 @@ class Player(pg.sprite.Sprite):
         self.last_shot = 0
         self.score = PLAYER_STAMINA
         self.health = PLAYER_HEALTH
+        self.damaged = False
+        self.damaged_alpha = None
 
         self.hit_obstacle = False
         self.hit_mob = False
@@ -60,6 +63,10 @@ class Player(pg.sprite.Sprite):
         if self.vel.x != 0 and self.vel.y != 0:
             self.vel.x *= 0.7071
             self.vel.y *= 0.7071
+
+    def hit(self):
+        self.damaged = True
+        self.damaged_alpha = chain(DAMAGE_ALPHA * 2)
 
     def switch_weapon(self):
         if len(self.available_weapons) > 1:
@@ -101,6 +108,11 @@ class Player(pg.sprite.Sprite):
         # apply rotation and linear velocity
         self.rot = (self.rot + self.rot_speed * self.game.dt) % 360
         self.image = pg.transform.rotate(self.game.player_img, self.rot)
+        if self.damaged:
+            try:
+                self.image.fill((255, 255, 255, next(self.damaged_alpha)), special_flags=pg.BLEND_RGBA_MULT)
+            except StopIteration:
+                self.damaged = False
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
         self.pos += self.vel * self.game.dt

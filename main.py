@@ -270,6 +270,7 @@ class Game:
             if self.player.health <= 0:
                 self.playing = False
         if hits:
+            self.player.hit()
             self.player.pos += vec(MOB_KNOCK_BACK, 0).rotate(-hits[0].rot)
             self.player.hit_mob = True
             self.player.last_hit_mob = pg.time.get_ticks()
