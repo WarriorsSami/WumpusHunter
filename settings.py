@@ -111,6 +111,9 @@ SPLAT_GREEN = "Particles\\PNG (Transparent)\\splat green.png"
 SPLAT_RED = "Particles\\PNG (Transparent)\\splat red.png"
 
 DAMAGE_ALPHA = [i for i in range(0, 255, 55)]
+NIGHT_COLOR = (20, 20, 20)
+LIGHT_RADIUS = (500, 500)
+LIGHT_MASK = "Particles\\PNG (Transparent)\\light_350_med.png"
 
 # define layers
 WALL_LAYER = 1

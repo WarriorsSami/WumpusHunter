@@ -70,13 +70,17 @@ class Game:
         self.dt = None
         self.paused = False
 
+        self.night = False
+        self.fog = None
+        self.light_mask = None
+        self.light_rect = None
+
         self.map_img = None
         self.map_rect = None
         self.map = None
         self.maps_folder = None
 
         self.items = None
-
         self.camera = None
 
         self.gun_flashes = []
@@ -139,6 +143,13 @@ class Game:
         for item in ITEM_IMAGES:
             self.item_images[item] = pg.image.load(path.join(assets_folder, ITEM_IMAGES[item])).convert_alpha()
 
+        # lightning effect
+        self.fog = pg.Surface((WIDTH, HEIGHT))
+        self.fog.fill(NIGHT_COLOR)
+        self.light_mask = pg.image.load(path.join(assets_folder, LIGHT_MASK)).convert_alpha()
+        self.light_mask = pg.transform.scale(self.light_mask, LIGHT_RADIUS)
+        self.light_rect = self.light_mask.get_rect()
+
         # load sounds and music
         pg.mixer.music.load(path.join(music_folder, BG_MUSIC))
         for sound in EFFECTS_SOUNDS:
@@ -169,18 +180,19 @@ class Game:
 
     def show_performance(self):
         # display score on screen
-        self.draw_text(f'Current Score: {self.player.score}', self.flag_font, FLAG_FONT_SIZE, BLACK, WIDTH - 400, 10)
+        color = BLACK if not self.night else WHITE
+        self.draw_text(f'Current Score: {self.player.score}', self.flag_font, FLAG_FONT_SIZE, color, WIDTH - 400, 10)
 
         # display hit obstacle flag on screen
-        color = BLACK if not self.player.hit_obstacle else RED
+        color = RED if self.player.hit_obstacle else (BLACK if not self.night else WHITE)
         self.draw_text(f'W: {self.player.hit_obstacle}', self.flag_font, FLAG_FONT_SIZE, color, WIDTH - 400, 50)
 
         # display hit mob flag on screen
-        color = BLACK if not self.player.hit_mob else RED
+        color = RED if self.player.hit_mob else (BLACK if not self.night else WHITE)
         self.draw_text(f'M: {self.player.hit_mob}', self.flag_font, FLAG_FONT_SIZE, color, WIDTH - 260, 50)
 
         # display hit treasure flag on screen
-        color = BLACK if not self.player.hit_treasure else RED
+        color = RED if self.player.hit_treasure else (BLACK if not self.night else WHITE)
         self.draw_text(f'T: {self.player.hit_treasure}', self.flag_font, FLAG_FONT_SIZE, color, WIDTH - 120, 50)
 
     def new(self):
@@ -317,6 +329,13 @@ class Game:
         for y in range(0, HEIGHT, TILE_SIZE):
             pg.draw.line(self.screen, LIGHT_GREY, (0, y), (WIDTH, y))
 
+    def render_fog(self):
+        # draw the light mask (gradient) onto fog image
+        self.fog.fill(NIGHT_COLOR)
+        self.light_rect.center = self.camera.apply(self.player).center
+        self.fog.blit(self.light_mask, self.light_rect)
+        self.screen.blit(self.fog, (0, 0), special_flags=pg.BLEND_MULT)
+
     def draw(self):
         pg.display.set_caption("{:.2f}".format(self.clock.get_fps()))
         # self.screen.fill(BG_COLOR)
@@ -331,6 +350,10 @@ class Game:
         if self.draw_debug:
             for wall in self.walls:
                 pg.draw.rect(self.screen, CYAN, self.camera.apply_rect(wall.rect), 1)
+
+        if self.night:
+            self.render_fog()
+
         self.show_performance()
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
         self.draw_text(f"Zombies: {len(self.mobs)}", self.hud_font, HUD_FONT_SIZE, WHITE, 10, 40)
@@ -353,6 +376,8 @@ class Game:
                     self.paused = not self.paused
                 if event.key == pg.K_q:
                     self.player.switch_weapon()
+                if event.key == pg.K_n:
+                    self.night = not self.night
 
     def wait_for_key(self):
         pg.event.wait()
