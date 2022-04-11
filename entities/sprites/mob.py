@@ -37,7 +37,7 @@ class Mob(pg.sprite.Sprite):
         # get the distance between the mob and the player
         target_dist = self.target.pos - self.pos
         if target_dist.length_squared() < MOB_DETECT_RADIUS ** 2:
-            if random() < 0.02:
+            if random() < 0.001:
                 choice(self.game.mob_moan_sounds).play()
             # rotate mob to face player
             self.rot = target_dist.angle_to(vec(1, 0))

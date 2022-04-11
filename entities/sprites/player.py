@@ -35,7 +35,8 @@ class Player(pg.sprite.Sprite):
         self.hit_treasure = False
         self.last_hit_treasure = 0
 
-        self.weapon = 'pistol'
+        self.main_weapon = 'pistol'
+        self.available_weapons = ['pistol']
 
     def get_keys(self):
         self.rot_speed = 0
@@ -60,19 +61,30 @@ class Player(pg.sprite.Sprite):
             self.vel.x *= 0.7071
             self.vel.y *= 0.7071
 
+    def switch_weapon(self):
+        if len(self.available_weapons) > 1:
+            self.game.effects_sounds['gun_pickup'].play()
+        self.main_weapon = self.available_weapons[(
+            self.available_weapons.index(self.main_weapon) + 1)
+            % len(self.available_weapons)]
+
+    def add_weapon(self, weapon):
+        self.main_weapon = weapon
+        self.available_weapons.append(weapon)
+
     def shoot(self):
         now = pg.time.get_ticks()
-        if now - self.last_shot > WEAPONS[self.weapon]['rate']:
+        if now - self.last_shot > WEAPONS[self.main_weapon]['rate']:
             self.last_shot = now
             dir_vec = vec(1, 0).rotate(-self.rot)
             pos = self.pos + BARREL_OFFSET.rotate(-self.rot)
-            self.vel = vec(-WEAPONS[self.weapon]['kickback'], 0).rotate(-self.rot)
+            self.vel = vec(-WEAPONS[self.main_weapon]['kickback'], 0).rotate(-self.rot)
 
-            for _ in range(WEAPONS[self.weapon]['bullet_count']):
+            for _ in range(WEAPONS[self.main_weapon]['bullet_count']):
                 self.score += SHOT_PENALTY
-                spread = uniform(-WEAPONS[self.weapon]['spread'], WEAPONS[self.weapon]['spread'])
+                spread = uniform(-WEAPONS[self.main_weapon]['spread'], WEAPONS[self.main_weapon]['spread'])
                 Bullet(self.game, pos, dir_vec.rotate(spread))
-                snd = choice(self.game.weapon_sounds[self.weapon])
+                snd = choice(self.game.weapon_sounds[self.main_weapon])
                 if snd.get_num_channels() >= 2:
                     snd.stop()
                 snd.play()

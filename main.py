@@ -244,16 +244,16 @@ class Game:
                 self.player.add_health(HEALTH_PACK_AMOUNT)
                 self.player.hit_treasure = True
                 self.player.last_hit_treasure = pg.time.get_ticks()
-            elif hit.item_type == 'shotgun' and self.player.weapon != 'shotgun':
+            elif hit.item_type == 'shotgun' and self.player.main_weapon != 'shotgun':
                 hit.kill()
                 self.effects_sounds['gun_pickup'].play()
-                self.player.weapon = 'shotgun'
+                self.player.add_weapon('shotgun')
 
         # bullet hits mob
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
         for hit in hits:
             if isinstance(hit, Mob):
-                hit.health -= WEAPONS[self.player.weapon]['damage'] * len(hits[hit])
+                hit.health -= WEAPONS[self.player.main_weapon]['damage'] * len(hits[hit])
                 hit.vel = vec(0, 0)
                 self.player.score += SHOT_MOB_AWARD
                 BloodSplash(self, hit.pos + FLASH_OFFSET)
@@ -340,6 +340,8 @@ class Game:
                     self.draw_debug = not self.draw_debug
                 if event.key == pg.K_p:
                     self.paused = not self.paused
+                if event.key == pg.K_q:
+                    self.player.switch_weapon()
 
     def show_start_screen(self):
         pass
