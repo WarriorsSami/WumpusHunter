@@ -43,6 +43,7 @@ class Game:
 
         self.flag_font = None
         self.title_font = None
+        self.hud_font = None
 
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption(TITLE)
@@ -72,6 +73,7 @@ class Game:
         self.map_img = None
         self.map_rect = None
         self.map = None
+        self.maps_folder = None
 
         self.items = None
 
@@ -98,18 +100,15 @@ class Game:
     def load_data(self):
         game_folder = path.dirname(__file__)
         assets_folder = path.join(game_folder, 'assets')
-        maps_folder = path.join(game_folder, 'maps/tiled_maps')
+        self.maps_folder = path.join(game_folder, 'maps/tiled_maps')
         music_folder = path.join(assets_folder, 'music')
 
-        self.title_font = path.join(assets_folder, 'fonts/ZOMBIE.ttf')
-        self.flag_font = path.join(assets_folder, 'fonts/FLAG.ttf')
+        self.title_font = path.join(assets_folder, 'fonts/Zombie.ttf')
+        self.flag_font = path.join(assets_folder, 'fonts/ComicSans.ttf')
+        self.hud_font = path.join(assets_folder, 'fonts/Impacted2.0.ttf')
 
         self.dim_screen = pg.Surface(self.screen.get_size()).convert_alpha()
         self.dim_screen.fill((0, 0, 0, 180))
-
-        self.map = TiledMap(path.join(maps_folder, 'level1.tmx'))
-        self.map_img = self.map.make_map()
-        self.map_rect = self.map_img.get_rect()
 
         self.player_img = pg.image.load(path.join(assets_folder, PLAYER_IMG)).convert_alpha()
         self.mob_img = pg.image.load(path.join(assets_folder, MOB_IMG)).convert_alpha()
@@ -191,6 +190,10 @@ class Game:
         self.bullets = pg.sprite.Group()
         self.items = pg.sprite.Group()
 
+        self.map = TiledMap(path.join(self.maps_folder, 'level1.tmx'))
+        self.map_img = self.map.make_map()
+        self.map_rect = self.map_img.get_rect()
+
         # for row, tiles in enumerate(self.map.data):
         #     for col, tile in enumerate(tiles):
         #         if tile == '1':
@@ -244,7 +247,7 @@ class Game:
                 self.player.add_health(HEALTH_PACK_AMOUNT)
                 self.player.hit_treasure = True
                 self.player.last_hit_treasure = pg.time.get_ticks()
-            elif hit.item_type == 'shotgun' and self.player.main_weapon != 'shotgun':
+            elif hit.item_type == 'shotgun' and 'shotgun' not in self.player.available_weapons:
                 hit.kill()
                 self.effects_sounds['gun_pickup'].play()
                 self.player.add_weapon('shotgun')
@@ -324,6 +327,7 @@ class Game:
                 pg.draw.rect(self.screen, CYAN, self.camera.apply_rect(wall.rect), 1)
         self.show_performance()
         draw_player_health(self.screen, 10, 10, self.player.health / PLAYER_HEALTH)
+        self.draw_text(f"Zombies: {len(self.mobs)}", self.hud_font, HUD_FONT_SIZE, WHITE, 10, 40)
 
         if self.paused:
             self.screen.blit(self.dim_screen, (0, 0))

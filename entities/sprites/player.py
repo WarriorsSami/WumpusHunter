@@ -66,7 +66,7 @@ class Player(pg.sprite.Sprite):
 
     def hit(self):
         self.damaged = True
-        self.damaged_alpha = chain(DAMAGE_ALPHA * 2)
+        self.damaged_alpha = chain(DAMAGE_ALPHA * 3)
 
     def switch_weapon(self):
         if len(self.available_weapons) > 1:
