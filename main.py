@@ -238,38 +238,44 @@ class Game:
         self.all_sprites.update()
         self.camera.update(self.player)
 
+        # game over?
+        if len(self.mobs) == 0:
+            self.playing = False
+
         # player hits items
         hits = pg.sprite.spritecollide(self.player, self.items, False)
-        for hit in hits:
-            if hit.item_type == 'health' and self.player.health < PLAYER_HEALTH:
-                hit.kill()
+        for item in hits:
+            if item.item_type == 'health' and self.player.health < PLAYER_HEALTH:
+                item.kill()
                 self.effects_sounds['health_up'].play()
                 self.player.add_health(HEALTH_PACK_AMOUNT)
                 self.player.hit_treasure = True
                 self.player.last_hit_treasure = pg.time.get_ticks()
-            elif hit.item_type == 'shotgun' and 'shotgun' not in self.player.available_weapons:
-                hit.kill()
+            elif item.item_type == 'shotgun' and 'shotgun' not in self.player.available_weapons:
+                item.kill()
                 self.effects_sounds['gun_pickup'].play()
                 self.player.add_weapon('shotgun')
 
         # bullet hits mob
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
-        for hit in hits:
-            if isinstance(hit, Mob):
-                hit.health -= WEAPONS[self.player.main_weapon]['damage'] * len(hits[hit])
-                hit.vel = vec(0, 0)
+        for mob in hits:
+            if isinstance(mob, Mob):
+                # mob.health -= WEAPONS[self.player.main_weapon]['damage'] * len(hits[mob])
+                for bullet in hits[mob]:
+                    mob.health -= bullet.damage
+                mob.vel = vec(0, 0)
                 self.player.score += SHOT_MOB_AWARD
-                BloodSplash(self, hit.pos + FLASH_OFFSET)
+                BloodSplash(self, mob.pos + FLASH_OFFSET)
 
         # mob hits player
         hits = pg.sprite.spritecollide(self.player, self.mobs, False, collide_hit_rect)
-        for hit in hits:
+        for mob in hits:
             if random() < 0.8:
                 choice(self.player_hit_sounds).play()
             self.player.health -= MOB_DAMAGE
             self.player.score += COLLIDE_WITH_MOB_PENALTY
             BloodScratch(self, self.player.pos + SCRATCH_OFFSET)
-            hit.vel = vec(0, 0)
+            mob.vel = vec(0, 0)
             if self.player.health <= 0:
                 self.playing = False
         if hits:
@@ -348,11 +354,29 @@ class Game:
                 if event.key == pg.K_q:
                     self.player.switch_weapon()
 
+    def wait_for_key(self):
+        pg.event.wait()
+        waiting = True
+        while waiting:
+            self.clock.tick(FPS)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.quit()
+                if event.type == pg.KEYUP:
+                    waiting = False
+
     def show_start_screen(self):
         pass
 
     def show_go_screen(self):
-        pass
+        self.screen.fill(BLACK)
+        self.draw_text("GAME OVER", self.title_font, TITLE_FONT_SIZE, RED,
+                       WIDTH / 2, HEIGHT / 2, align="center")
+        self.draw_text("Press a key to start", self.title_font, TITLE_FONT_SIZE - 25, WHITE,
+                       WIDTH / 2, HEIGHT * 3 / 4, align="center")
+        pg.display.flip()
+        self.wait_for_key()
 
 
 g = Game()

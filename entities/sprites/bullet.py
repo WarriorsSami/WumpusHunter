@@ -2,7 +2,7 @@ from settings import *
 
 
 class Bullet(pg.sprite.Sprite):
-    def __init__(self, game, pos, dir_vec):
+    def __init__(self, game, pos, dir_vec, damage):
         self._layer = BULLET_LAYER
         self.groups = game.all_sprites, game.bullets
         pg.sprite.Sprite.__init__(self, self.groups)
@@ -14,6 +14,7 @@ class Bullet(pg.sprite.Sprite):
         self.rect.center = pos
         self.vel = dir_vec * WEAPONS[game.player.main_weapon]['bullet_speed'] * uniform(0.9, 1.1)
         self.spawn_time = pg.time.get_ticks()
+        self.damage = damage
 
     def update(self):
         self.pos += self.vel * self.game.dt

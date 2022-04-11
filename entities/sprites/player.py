@@ -90,7 +90,7 @@ class Player(pg.sprite.Sprite):
             for _ in range(WEAPONS[self.main_weapon]['bullet_count']):
                 self.score += SHOT_PENALTY
                 spread = uniform(-WEAPONS[self.main_weapon]['spread'], WEAPONS[self.main_weapon]['spread'])
-                Bullet(self.game, pos, dir_vec.rotate(spread))
+                Bullet(self.game, pos, dir_vec.rotate(spread), WEAPONS[self.main_weapon]['damage'])
                 snd = choice(self.game.weapon_sounds[self.main_weapon])
                 if snd.get_num_channels() >= 2:
                     snd.stop()
