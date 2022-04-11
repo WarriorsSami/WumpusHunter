@@ -263,10 +263,11 @@ class Game:
                 self.player.add_health(HEALTH_PACK_AMOUNT)
                 self.player.hit_treasure = True
                 self.player.last_hit_treasure = pg.time.get_ticks()
-            elif item.item_type == 'shotgun' and 'shotgun' not in self.player.available_weapons:
+            elif item.item_type in ['shotgun', 'machine gun']\
+                    and item.item_type not in self.player.available_weapons:
                 item.kill()
                 self.effects_sounds['gun_pickup'].play()
-                self.player.add_weapon('shotgun')
+                self.player.add_weapon(item.item_type)
 
         # bullet hits mob
         hits = pg.sprite.groupcollide(self.mobs, self.bullets, False, True)
@@ -391,12 +392,9 @@ class Game:
                 if event.type == pg.KEYUP:
                     waiting = False
 
-    def show_start_screen(self):
-        pass
-
-    def show_go_screen(self):
+    def show_screen(self, message):
         self.screen.fill(BLACK)
-        self.draw_text("GAME OVER", self.title_font, TITLE_FONT_SIZE, RED,
+        self.draw_text(message, self.title_font, TITLE_FONT_SIZE, RED,
                        WIDTH / 2, HEIGHT / 2, align="center")
         self.draw_text("Press a key to start", self.title_font, TITLE_FONT_SIZE - 25, WHITE,
                        WIDTH / 2, HEIGHT * 3 / 4, align="center")
@@ -405,8 +403,8 @@ class Game:
 
 
 g = Game()
-g.show_start_screen()
+g.show_screen("ZOMBIE HUNTER")
 while True:
     g.new()
     g.run()
-    g.show_go_screen()
+    g.show_screen("GAME OVER" if len(g.mobs) > 0 else "YOU WIN")

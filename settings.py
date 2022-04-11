@@ -68,6 +68,16 @@ WEAPONS = {
         "damage": 5,
         "bullet_size": "sm",
         "bullet_count": 12
+    },
+    "machine gun": {
+        "bullet_speed": 700,
+        "bullet_lifetime": 1000,
+        "rate": 70,
+        "kickback": 300,
+        "spread": 10,
+        "damage": 9,
+        "bullet_size": "sm",
+        "bullet_count": 1
     }
 }
 BULLET_LG_WIDTH = 20
@@ -126,7 +136,8 @@ ITEMS_LAYER = 1
 # define items
 ITEM_IMAGES = {
     "health": "PNG\\Items\\health_pack.png",
-    "shotgun": "PNG\\Items\\shotgun.png"
+    "shotgun": "PNG\\Items\\shotgun.png",
+    "machine gun": "PNG\\Items\\weapon_machine.png"
 }
 HEALTH_PACK_AMOUNT = 20
 BOB_RANGE = 15
@@ -143,7 +154,8 @@ MOB_MOAN_SOUNDS = ["sound\\roar\\zombie-roar-1.wav", "sound\\roar\\zombie-roar-2
                    "sound\\roar\\zombie-roar-10.wav"]
 WEAPON_SOUNDS = {
     "pistol": ["sound\\gun\\pistol.wav"],
-    "shotgun": ["sound\\gun\\shotgun.wav"]
+    "shotgun": ["sound\\gun\\shotgun.wav"],
+    "machine gun": ["sound\\gun\\pistol.wav"]
 }
 EFFECTS_SOUNDS = {
     "level_start": "sound\\level_start.wav",
