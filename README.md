@@ -2,7 +2,7 @@
 Zombie Hunter is a tile-based 2D shooter game with a top-down view developed with the purpose to learn Pygame and game dev related concepts.
 
 # Demo
-[<p align="center"><img alt="alt_text" width="800px" height="500px" src="assets/Demo.gif" /></p>](https://www.youtube.com/watch?v=zhnfb5-xbZY)
+[<p align="center"><img alt="alt_text" width="800px" height="500px" src="assets/Demo.gif" /></p>](https://youtu.be/XC6M5wO7oUA)
 
 # Setup
 In order to run the project you need to have already installed a **Python interpreter (>= 3.7)**, the Python Package Installer (**Pip**) and **Git** on your machine.
