@@ -46,6 +46,7 @@ Command List:
 - [ ] add multiple sorts of mobs
 - [ ] add guns to mobs
 - [ ] add obstacles that can be manipulated
+- [ ] add ammunition
 
 ## References and Sources:
 - framework docs: [Pygame Docs](https://www.pygame.org/docs/)
