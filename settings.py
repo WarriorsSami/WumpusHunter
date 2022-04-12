@@ -19,7 +19,7 @@ CYAN = (0, 255, 255)
 WIDTH = 1024
 HEIGHT = 768
 FPS = 60
-TITLE = "Wumpus Hunter"
+TITLE = "Zombie Hunter"
 BG_COLOR = BROWN
 
 TILE_SIZE = 64
